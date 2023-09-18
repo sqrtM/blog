@@ -1,0 +1,32 @@
+services:
+  server:
+    build:
+      context: .
+      target: final
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    depends_on:
+      database:
+        condition: service_healthy
+  database:
+    image: postgres
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=database
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
+
