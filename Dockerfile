@@ -19,9 +19,6 @@ FROM gcr.io/distroless/cc as final
 WORKDIR /app
 COPY --from=builder /app/target/release/blog /usr/local/bin
 
-# Configure rocket to listen on all interfaces.
-ENV ROCKET_ADDRESS=0.0.0.0
-ENV ROCKET_SECRET_KEY=f76mdAwq36kBh6eW//rsioZ3QbvB9iy3atef8tXDFdc=
 ENV POSTGRES_PASSWORD=password
 ENV POSTGRES_USER=postgres
 

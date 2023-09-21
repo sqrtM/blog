@@ -11,4 +11,4 @@ dotenvy = "0.15.7"
 tokio = { version = "1.32.0", features = ["full"] }
 serde = { version = "1.0.188", features = ["derive"] }
 tracing = "0.1.37"
-sqlx = "0.7.1"
+sqlx = { version = "0.7.1", features = ["runtime-tokio", "tls-rustls", "postgres"] }
