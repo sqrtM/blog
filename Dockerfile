@@ -21,5 +21,6 @@ COPY --from=builder /app/target/release/blog /usr/local/bin
 
 ENV POSTGRES_PASSWORD=password
 ENV POSTGRES_USER=postgres
+ENV DATABASE_URL="postgresql://host.docker.internal:5431/database?user=postgres&password=password"
 
 CMD ["/usr/local/bin"]

@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use axum::{
     Router,
     routing::get,
@@ -11,7 +9,12 @@ use sqlx::postgres::PgPoolOptions;
 use crate::controllers::user_controller;
 
 mod controllers;
+mod models;
+mod entities;
+mod repositories;
+mod services;
 
+#[derive(Clone)]
 pub struct AppState {
     db: Pool<Postgres>,
 }
@@ -21,7 +24,7 @@ async fn main() {
     dotenv().ok();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let app_state = Arc::new(AppState {
+    let app_state = AppState {
         db: match PgPoolOptions::new()
             .max_connections(10)
             .connect(&database_url)
@@ -36,7 +39,7 @@ async fn main() {
                 std::process::exit(1);
             }
         }
-    });
+    };
     sqlx::migrate!().run(&app_state.db).await.expect("Migration failed!");
 
 
