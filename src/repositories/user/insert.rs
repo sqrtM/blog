@@ -1,10 +1,13 @@
-use sqlx::{Pool, Postgres, query_as};
+use sqlx::{query_as, Pool, Postgres};
 
 use crate::models::user::add_user_request::AddUserRequest;
 use crate::models::user::user_entity::UserEntity;
 use crate::models::user::user_error::UserError;
 
-pub async fn insert(pool: &Pool<Postgres>, request: AddUserRequest) -> Result<UserEntity, UserError> {
+pub async fn insert(
+    pool: &Pool<Postgres>,
+    request: AddUserRequest,
+) -> Result<UserEntity, UserError> {
     match query_as!(
         UserEntity,
         // language=PostgreSQL
@@ -23,10 +26,10 @@ pub async fn insert(pool: &Pool<Postgres>, request: AddUserRequest) -> Result<Us
         request.password,
         request.email
     )
-        .fetch_one(pool)
-        .await
+    .fetch_one(pool)
+    .await
     {
-        Ok(user) => { Ok(user) }
+        Ok(user) => Ok(user),
         Err(err) => {
             match err.as_database_error() {
                 None => {
@@ -41,8 +44,8 @@ pub async fn insert(pool: &Pool<Postgres>, request: AddUserRequest) -> Result<Us
                         .parse::<u32>()
                         .expect("No Code????")
                     {
-                        23505 => { Err(UserError::UsernameTaken) }
-                        _ => { Err(UserError::Unknown) }
+                        23505 => Err(UserError::UsernameTaken),
+                        _ => Err(UserError::Unknown),
                     }
                 }
             }

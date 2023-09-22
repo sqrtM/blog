@@ -7,5 +7,5 @@ pub struct UserEntity {
     pub password: String,
     pub email: String,
     pub created_at: chrono::DateTime<Utc>,
-    pub last_connection: chrono::DateTime<Utc>
+    pub last_connection: chrono::DateTime<Utc>,
 }

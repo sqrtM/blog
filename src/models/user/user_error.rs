@@ -3,7 +3,7 @@ pub enum UserError {
     UsernameTaken,
     EmailTaken,
     PasswordInvalid(InvalidPasswordReason),
-    Unknown
+    Unknown,
 }
 
 #[derive(PartialEq, Debug)]
@@ -16,18 +16,10 @@ pub enum InvalidPasswordReason {
 impl UserError {
     pub fn get_message(&self) -> String {
         match self {
-            UserError::UsernameTaken => {
-                String::from("Username Taken")
-            }
-            UserError::EmailTaken => {
-                String::from("Email Taken")
-            }
-            UserError::PasswordInvalid(_) => {
-                String::from("Password Invalid")
-            }
-            UserError::Unknown => {
-                String::from("No idea")
-            }
+            UserError::UsernameTaken => String::from("Username Taken"),
+            UserError::EmailTaken => String::from("Email Taken"),
+            UserError::PasswordInvalid(_) => String::from("Password Invalid"),
+            UserError::Unknown => String::from("No idea"),
         }
     }
 }

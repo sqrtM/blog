@@ -1,8 +1,8 @@
-use axum::Router;
 use axum::routing::get;
+use axum::Router;
 
-use crate::AppState;
 use crate::routes::users::user_routes;
+use crate::AppState;
 
 mod users;
 
@@ -15,4 +15,3 @@ pub fn api_routes() -> Router<AppState> {
 async fn root() -> &'static str {
     "root"
 }
-

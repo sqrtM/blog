@@ -5,6 +5,8 @@ services:
       target: final
     ports:
       - 8000:8000
+    env_file:
+      - .env.docker
     depends_on:
       database:
         condition: service_healthy
@@ -14,10 +16,8 @@ services:
     user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=database
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=postgres
+    env_file:
+      - .env.docker
     ports:
       - "5431:5432"
     healthcheck:
