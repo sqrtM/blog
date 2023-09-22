@@ -13,14 +13,14 @@ pub async fn root() -> &'static str {
 
 pub async fn add_user(
     State(state): State<AppState>,
-    Json(request): Json<AddUserRequest>
+    Json(request): Json<AddUserRequest>,
 ) -> AddUserResponse {
     if request.is_valid() {
         match add(&state.db, request).await {
-            Ok(_) => AddUserResponse { status: StatusCode::ACCEPTED, message: "succ" },
-            Err(_) => AddUserResponse { status: StatusCode::GATEWAY_TIMEOUT, message: "failure" }
+            Ok(_) => AddUserResponse { status: StatusCode::ACCEPTED },
+            Err(_) => AddUserResponse { status: StatusCode::GATEWAY_TIMEOUT }
         }
     } else {
-        AddUserResponse { status: StatusCode::ALREADY_REPORTED, message: "failure" }
+        AddUserResponse { status: StatusCode::ALREADY_REPORTED }
     }
 }

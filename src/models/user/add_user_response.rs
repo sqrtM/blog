@@ -4,7 +4,6 @@ use axum::response::{IntoResponse, Response};
 
 pub struct AddUserResponse {
     pub(crate) status: StatusCode,
-    pub(crate) message: &'static str,
 }
 
 impl IntoResponse for AddUserResponse {
