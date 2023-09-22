@@ -1,9 +1,7 @@
 use chrono::Utc;
-use sqlx::FromRow;
 use sqlx::types::Uuid;
 
-#[derive(FromRow)]
-pub struct User {
+pub struct UserEntity {
     pub id: Uuid,
     pub username: String,
     pub password: String,

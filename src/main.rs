@@ -1,18 +1,15 @@
-use axum::{
-    Router,
-    routing::get,
-};
+use axum::Router;
 use dotenvy::dotenv;
 use sqlx::{Pool, Postgres};
 use sqlx::postgres::PgPoolOptions;
 
-use crate::controllers::user_controller;
+use crate::routes::api_routes;
 
 mod controllers;
 mod models;
-mod entities;
 mod repositories;
 mod services;
+mod routes;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -43,26 +40,12 @@ async fn main() {
     sqlx::migrate!().run(&app_state.db).await.expect("Migration failed!");
 
 
-    let user_routes = Router::new()
-        .route("/",
-               get(user_controller::root)
-                   .post(user_controller::add_user)
-        );
-
-    let api_routes = Router::new()
-        .route("/", get(root))
-        .nest("/users", user_routes);
-
     let router = Router::new()
-        .nest("/api", api_routes)
+        .nest("/api", api_routes())
         .with_state(app_state);
 
     axum::Server::bind(&"0.0.0.0:8000".parse().unwrap())
         .serve(router.into_make_service())
         .await
         .unwrap();
-}
-
-async fn root() -> &'static str {
-    "root"
 }

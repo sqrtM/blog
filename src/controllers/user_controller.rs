@@ -3,15 +3,18 @@ use axum::http::StatusCode;
 use axum::Json;
 
 use crate::AppState;
-use crate::entities::add_user_request::AddUserRequest;
-use crate::entities::add_user_response::AddUserResponse;
+use crate::models::user::add_user_request::AddUserRequest;
+use crate::models::user::add_user_response::AddUserResponse;
 use crate::repositories::user::add;
 
 pub async fn root() -> &'static str {
-    "root user"
+    "root user_entity"
 }
-#[axum_macros::debug_handler]
-pub async fn add_user(State(state): State<AppState>, Json(request): Json<AddUserRequest>) -> AddUserResponse {
+
+pub async fn add_user(
+    State(state): State<AppState>,
+    Json(request): Json<AddUserRequest>
+) -> AddUserResponse {
     if request.is_valid() {
         match add(&state.db, request).await {
             Ok(_) => AddUserResponse { status: StatusCode::ACCEPTED, message: "succ" },

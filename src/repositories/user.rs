@@ -1,11 +1,11 @@
 use sqlx::{Error, Pool, Postgres, query_as};
-use crate::models::user::User;
+use crate::models::user::add_user_request::AddUserRequest;
+use crate::models::user::user_entity::UserEntity;
 
-use crate::entities::add_user_request::AddUserRequest;
 
-pub async fn add(pool: &Pool<Postgres>, request: AddUserRequest) -> Result<User, Error> {
+pub async fn add(pool: &Pool<Postgres>, request: AddUserRequest) -> Result<UserEntity, Error> {
     query_as!(
-        User,
+        UserEntity,
         // language=PostgreSQL
         "
         INSERT INTO
