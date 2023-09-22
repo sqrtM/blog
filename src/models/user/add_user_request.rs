@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct AddUserRequest {
     pub(crate) username: String,
     pub(crate) password: String,

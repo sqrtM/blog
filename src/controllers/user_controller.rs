@@ -5,7 +5,7 @@ use axum::Json;
 use crate::AppState;
 use crate::models::user::add_user_request::AddUserRequest;
 use crate::models::user::add_user_response::AddUserResponse;
-use crate::repositories::user::add;
+use crate::repositories::user::add::add;
 
 pub async fn root() -> &'static str {
     "root user_entity"

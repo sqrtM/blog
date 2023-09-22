@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 
-
+#[derive(Clone)]
 pub struct AddUserResponse {
     pub(crate) status: StatusCode,
 }
