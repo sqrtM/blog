@@ -1,7 +1,5 @@
 use crate::repositories::get_pool;
 use axum::Router;
-use dotenvy::dotenv;
-use sqlx::postgres::PgPoolOptions;
 use sqlx::{Pool, Postgres};
 
 use crate::routes::api_routes;

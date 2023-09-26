@@ -2,13 +2,17 @@
 pub enum UserError {
     UsernameTaken,
     EmailTaken,
-    PasswordInvalid(InvalidPasswordReason),
+    PasswordInvalid(InvalidInput),
+    EmailInvalid(InvalidInput),
+    UsernameInvalid(InvalidInput),
     Unknown,
 }
 
 #[derive(PartialEq, Debug)]
-pub enum InvalidPasswordReason {
-    LessThanEightCharacters,
+pub enum InvalidInput {
+    TooShort,
+    TooLong,
+    //Other,
     //NoNumerals,
     // ...
 }
@@ -18,8 +22,25 @@ impl UserError {
         match self {
             UserError::UsernameTaken => String::from("Username Taken"),
             UserError::EmailTaken => String::from("Email Taken"),
-            UserError::PasswordInvalid(_) => String::from("Password Invalid"),
-            UserError::Unknown => String::from("No idea"),
+            UserError::PasswordInvalid(e) => match e {
+                InvalidInput::TooShort => {
+                    String::from("Password must be longer than eight characters.")
+                }
+                InvalidInput::TooLong => {
+                    String::from("Password must be shorter than 60 characters.")
+                }
+            },
+            UserError::EmailInvalid(e) => match e {
+                InvalidInput::TooLong => String::from("Email must be shorter than 60 characters."),
+                _ => String::from("Error with email"),
+            },
+            UserError::UsernameInvalid(e) => match e {
+                InvalidInput::TooLong => {
+                    String::from("Username must be shorter than 60 characters.")
+                }
+                _ => String::from("Error with username"),
+            },
+            UserError::Unknown => String::from("Unknown input error."),
         }
     }
 }

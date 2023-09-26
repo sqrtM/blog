@@ -4,20 +4,19 @@ use axum::Json;
 
 use crate::models::user::add_user_request::AddUserRequest;
 use crate::models::user::add_user_response::AddUserResponse;
-use crate::models::user::user_error::{InvalidPasswordReason, UserError};
 use crate::repositories::user::insert::insert;
 use crate::AppState;
 
 pub async fn root() -> &'static str {
-    "root user_entity"
+    "root user"
 }
 
 pub async fn add_user(
     State(state): State<AppState>,
     Json(request): Json<AddUserRequest>,
 ) -> AddUserResponse {
-    if request.is_valid() {
-        match insert(&state.db, request).await {
+    match request.is_valid() {
+        Ok(_) => match insert(&state.db, request).await {
             Ok(_) => AddUserResponse {
                 status: StatusCode::ACCEPTED,
                 message: String::from("good"),
@@ -26,12 +25,10 @@ pub async fn add_user(
                 status: StatusCode::INTERNAL_SERVER_ERROR,
                 message: e.get_message(),
             },
-        }
-    } else {
-        AddUserResponse {
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: UserError::PasswordInvalid(InvalidPasswordReason::LessThanEightCharacters)
-                .get_message(),
-        }
+        },
+        Err(e) => AddUserResponse {
+            status: StatusCode::BAD_REQUEST,
+            message: e.get_message(),
+        },
     }
 }

@@ -17,8 +17,14 @@ pub async fn insert(
             (username, password, email)
         SELECT
             $1, crypt($2, gen_salt('bf')), crypt($3, gen_salt('bf'))
-        WHERE NOT EXISTS
-            (SELECT 1 FROM users WHERE email = crypt($3, email))
+        WHERE NOT EXISTS (
+            SELECT 
+                1 
+            FROM 
+                users 
+            WHERE 
+                email = crypt($3, email)
+            )
         RETURNING
             id, username, password, email, created_at, last_connection
         ",
