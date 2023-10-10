@@ -1,8 +1,8 @@
 use serde::Deserialize;
 
+use crate::models::user::user_error::{InvalidInput, UserError};
 use crate::models::user::user_error::InvalidInput::{TooLong, TooShort};
 use crate::models::user::user_error::UserError::{EmailInvalid, PasswordInvalid, UsernameInvalid};
-use crate::models::user::user_error::{InvalidInput, UserError};
 
 #[derive(Deserialize, Clone)]
 pub struct AddUserRequest {

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        INSERT INTO\n            users\n            (username, password, email)\n        SELECT\n            $1, crypt($2, gen_salt('bf')), crypt($3, gen_salt('bf'))\n        WHERE NOT EXISTS (\n            SELECT \n                1 \n            FROM \n                users \n            WHERE \n                email = crypt($3, email)\n            )\n        RETURNING\n            id, username, password, email, created_at, last_connection\n        ",
+  "query": "\n        INSERT INTO\n            users\n            (user_username, user_password, user_email)\n        SELECT\n            $1, crypt($2, gen_salt('bf')), crypt($3, gen_salt('bf'))\n        WHERE NOT EXISTS (\n            SELECT \n                1 \n            FROM \n                users \n            WHERE \n                user_email = crypt($3, user_email)\n            )\n        RETURNING\n            user_id AS id, \n            user_username AS username, \n            user_password AS password, \n            user_email AS email, \n            user_created_at AS created_at, \n            user_last_connection AS last_connection\n        ",
   "describe": {
     "columns": [
       {
@@ -50,5 +50,5 @@
       false
     ]
   },
-  "hash": "ca72f13f470491e51263618c232915116745732236d20fde98ae41180bfe65a7"
+  "hash": "02e0b32773cc076ea3b128e23e238cbff572d4a89b03756257e284e49bf52056"
 }

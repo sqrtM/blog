@@ -1,7 +1,7 @@
-use crate::repositories::get_pool;
 use axum::Router;
 use sqlx::{Pool, Postgres};
 
+use crate::repositories::get_pool;
 use crate::routes::api_routes;
 
 mod controllers;
@@ -25,7 +25,7 @@ async fn main() {
         .nest("/api", api_routes())
         .with_state(app_state);
 
-    axum::Server::bind(&"0.0.0.0:8000".parse().unwrap())
+    axum::Server::bind(&"0.0.0.0:8001".parse().unwrap())
         .serve(router.into_make_service())
         .await
         .unwrap();

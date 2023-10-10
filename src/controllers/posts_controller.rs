@@ -2,18 +2,14 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
 
-use crate::models::user::add_user_request::AddUserRequest;
+use crate::models::post::add_post_request::AddPostRequest;
 use crate::models::AddResponse;
-use crate::repositories::user::insert::insert;
+use crate::repositories::posts::insert::insert;
 use crate::AppState;
 
-pub async fn root() -> &'static str {
-    "root user"
-}
-
-pub async fn add_user(
+pub async fn add_post(
     State(state): State<AppState>,
-    Json(request): Json<AddUserRequest>,
+    Json(request): Json<AddPostRequest>,
 ) -> AddResponse {
     match request.is_valid() {
         Ok(_) => match insert(&state.db, request).await {
@@ -23,12 +19,12 @@ pub async fn add_user(
             },
             Err(e) => AddResponse {
                 status: StatusCode::INTERNAL_SERVER_ERROR,
-                message: e.get_message(),
+                message: e.to_string(),
             },
         },
         Err(e) => AddResponse {
             status: StatusCode::BAD_REQUEST,
-            message: e.get_message(),
+            message: "over here".parse().unwrap(),
         },
     }
 }

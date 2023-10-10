@@ -14,3 +14,4 @@ tracing = "0.1.37"
 sqlx = { version = "0.7.1", features = ["runtime-tokio", "tls-rustls", "postgres", "chrono", "uuid"] }
 chrono = "0.4.31"
 axum-macros = "0.3.8"
+uuid = { version = "1.4.1", features = ["v4", "serde"] }

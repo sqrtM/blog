@@ -14,7 +14,7 @@ pub async fn insert(
         "
         INSERT INTO
             users
-            (username, password, email)
+            (user_username, user_password, user_email)
         SELECT
             $1, crypt($2, gen_salt('bf')), crypt($3, gen_salt('bf'))
         WHERE NOT EXISTS (
@@ -23,10 +23,15 @@ pub async fn insert(
             FROM 
                 users 
             WHERE 
-                email = crypt($3, email)
+                user_email = crypt($3, user_email)
             )
         RETURNING
-            id, username, password, email, created_at, last_connection
+            user_id AS id, 
+            user_username AS username, 
+            user_password AS password, 
+            user_email AS email, 
+            user_created_at AS created_at, 
+            user_last_connection AS last_connection
         ",
         request.username,
         request.password,
