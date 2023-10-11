@@ -1,4 +1,6 @@
-#[derive(PartialEq, Debug)]
+use serde::Serialize;
+
+#[derive(PartialEq, Debug, Serialize)]
 pub enum UserError {
     UsernameTaken,
     EmailTaken,
@@ -8,7 +10,7 @@ pub enum UserError {
     Unknown,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Serialize)]
 pub enum InvalidInput {
     TooShort,
     TooLong,

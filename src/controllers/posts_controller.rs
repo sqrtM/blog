@@ -1,8 +1,11 @@
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
+use sqlx::Error;
 
 use crate::models::post::add_post_request::AddPostRequest;
+use crate::models::post::post_entity::PostEntity;
+use crate::models::post::post_error::PostError;
 use crate::models::AddResponse;
 use crate::repositories::posts::insert::insert;
 use crate::AppState;
@@ -10,21 +13,21 @@ use crate::AppState;
 pub async fn add_post(
     State(state): State<AppState>,
     Json(request): Json<AddPostRequest>,
-) -> AddResponse {
+) -> Result<AddResponse<PostEntity>, AddResponse<PostError>> {
     match request.is_valid() {
         Ok(_) => match insert(&state.db, request).await {
-            Ok(_) => AddResponse {
+            Ok(p) => Ok(AddResponse {
                 status: StatusCode::ACCEPTED,
-                message: String::from("good"),
-            },
-            Err(e) => AddResponse {
+                message: Json(p),
+            }),
+            Err(_e) => Err(AddResponse {
                 status: StatusCode::INTERNAL_SERVER_ERROR,
-                message: e.to_string(),
-            },
+                message: Json(PostError),
+            }),
         },
-        Err(e) => AddResponse {
+        Err(_e) => Err(AddResponse {
             status: StatusCode::BAD_REQUEST,
-            message: "over here".parse().unwrap(),
-        },
+            message: Json(PostError),
+        }),
     }
 }

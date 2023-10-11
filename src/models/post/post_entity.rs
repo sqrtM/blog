@@ -1,9 +1,10 @@
 use chrono::{DateTime, Utc};
+use serde::Serialize;
 use sqlx::types::Uuid;
 
 use crate::models::user::user_entity::UserEntity;
 
-#[derive(sqlx::FromRow)]
+#[derive(sqlx::FromRow, Serialize)]
 pub struct PostEntity {
     #[sqlx(rename = "post_id")]
     pub id: Uuid,
