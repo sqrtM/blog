@@ -25,7 +25,7 @@ async fn main() {
         .nest("/api", api_routes())
         .with_state(app_state);
 
-    axum::Server::bind(&"0.0.0.0:8001".parse().unwrap())
+    axum::Server::bind(&"0.0.0.0:8000".parse().unwrap())
         .serve(router.into_make_service())
         .await
         .unwrap();
