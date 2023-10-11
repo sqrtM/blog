@@ -4,7 +4,7 @@ use sqlx::types::Uuid;
 
 use crate::models::user::user_entity::UserEntity;
 
-#[derive(sqlx::FromRow, Serialize)]
+#[derive(sqlx::FromRow, Serialize, PartialEq)]
 pub struct PostEntity {
     #[sqlx(rename = "post_id")]
     pub id: Uuid,

@@ -1,10 +1,16 @@
-use sqlx::{query_as, Error, Pool, Postgres};
+use crate::models::{AddResponse, FailResponse};
+use axum::http::StatusCode;
+use axum::Json;
+use sqlx::{query_as, Pool, Postgres};
 
 use crate::models::post::add_post_request::AddPostRequest;
 use crate::models::post::post_entity::PostEntity;
 use crate::models::post::post_error::PostError;
 
-pub async fn insert(pool: &Pool<Postgres>, request: AddPostRequest) -> Result<PostEntity, Error> {
+pub async fn insert(
+    pool: &Pool<Postgres>,
+    request: AddPostRequest,
+) -> Result<AddResponse<PostEntity>, FailResponse<PostError>> {
     match query_as(
         // language=PostgreSQL
         "       
@@ -43,7 +49,13 @@ pub async fn insert(pool: &Pool<Postgres>, request: AddPostRequest) -> Result<Po
     .fetch_one(pool)
     .await
     {
-        Ok(post) => Ok(post),
-        Err(err) => Err(err),
+        Ok(post) => Ok(AddResponse {
+            status: StatusCode::ACCEPTED,
+            content: Json(post),
+        }),
+        Err(_err) => Err(FailResponse {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            content: Json(PostError),
+        }),
     }
 }

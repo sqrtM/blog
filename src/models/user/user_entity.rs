@@ -2,7 +2,7 @@ use chrono::Utc;
 use serde::Serialize;
 use sqlx::types::Uuid;
 
-#[derive(sqlx::FromRow, Serialize)]
+#[derive(sqlx::FromRow, Serialize, PartialEq)]
 pub struct UserEntity {
     #[sqlx(rename = "user_id")]
     pub id: Uuid,
