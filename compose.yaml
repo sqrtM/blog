@@ -1,9 +1,22 @@
 services:
-
-  server:
+  onion-service:
     build:
       context: .
-      target: final
+      dockerfile: Dockerfile.tor  # Use your modified Dockerfile
+    container_name: onion-service-container
+    ports:
+      - 8001:8000
+    env_file:
+      - .env.docker
+    depends_on:
+      database:
+        condition: service_healthy
+
+  web-service:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Use your modified Dockerfile
+    container_name: standard-webpage-container
     ports:
       - 8000:8000
     env_file:

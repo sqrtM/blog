@@ -1,0 +1,11 @@
+# Stage 1: Create the Tor image
+FROM fedora:latest AS tor
+RUN echo -e "[tor]\nname=Tor for Fedora \$releasever - \$basearch\nbaseurl=https://rpm.torproject.org/fedora/\$releasever/\$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://rpm.torproject.org/fedora/public_gpg.key\ncost=100" > /etc/yum.repos.d/tor.repo
+RUN dnf install -y tor
+
+# Configure Tor for the onion service
+RUN echo -e "HiddenServiceDir /var/lib/tor/blog/\nHiddenServicePort 80 web-service:8000" >> /etc/tor/torrc
+
+# Start the Tor service
+USER toranon
+CMD ["/usr/bin/tor"]
