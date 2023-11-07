@@ -1,6 +1,7 @@
 use axum::routing::get;
 use axum::Router;
 
+use crate::html::BaseTemplate;
 use crate::routes::posts::posts_routes;
 use crate::routes::users::user_routes;
 use crate::AppState;
@@ -15,6 +16,6 @@ pub fn api_routes() -> Router<AppState> {
         .nest("/posts", posts_routes())
 }
 
-async fn root() -> &'static str {
-    "root"
+async fn root() -> BaseTemplate {
+    BaseTemplate
 }

@@ -5,6 +5,7 @@ use crate::repositories::get_pool;
 use crate::routes::api_routes;
 
 mod controllers;
+mod html;
 mod models;
 mod repositories;
 mod routes;
