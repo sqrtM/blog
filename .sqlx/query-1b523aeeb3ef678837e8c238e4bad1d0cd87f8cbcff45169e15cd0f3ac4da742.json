@@ -1,0 +1,25 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH new_key AS (\n            SELECT encode(digest(gen_random_bytes(16), 'sha1'), 'hex') AS unhashed_key\n        )\n        UPDATE users\n        SET user_password = crypt($1, gen_salt('bf')), \n            user_recovery_key = crypt((SELECT unhashed_key FROM new_key), gen_salt('bf'))\n        WHERE user_recovery_key = crypt($2, user_recovery_key)  \n          AND user_password = crypt($3, user_password) \n          AND user_username = $4\n        RETURNING (SELECT unhashed_key FROM new_key) AS key;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "key",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "1b523aeeb3ef678837e8c238e4bad1d0cd87f8cbcff45169e15cd0f3ac4da742"
+}

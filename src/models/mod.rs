@@ -47,14 +47,17 @@ impl Error for UserError {
                 InvalidInput::TooLong => {
                     String::from("Password must be shorter than 60 characters.")
                 }
+                InvalidInput::NotEqual => String::from("Passwords are not the same!"),
             },
             UserError::UsernameInvalid(e) => match e {
                 InvalidInput::TooLong => {
                     String::from("Username must be shorter than 60 characters.")
                 }
-                _ => String::from("Error with username"),
+                InvalidInput::TooShort => String::from("Username too short!"),
+                InvalidInput::NotEqual => String::from("This should never happen : 0x01"),
             },
-            UserError::Unknown => String::from("Unknown input error."),
+            UserError::RecoveryKeyInvalid => String::from("Recovery key is not correct."),
+            UserError::Unknown => String::from("Unknown Error."),
         }
     }
 }

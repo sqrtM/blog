@@ -6,6 +6,7 @@ pub enum UserError {
     EmailTaken,
     PasswordInvalid(InvalidInput),
     UsernameInvalid(InvalidInput),
+    RecoveryKeyInvalid,
     Unknown,
 }
 
@@ -13,6 +14,7 @@ pub enum UserError {
 pub enum InvalidInput {
     TooShort,
     TooLong,
+    NotEqual,
     //Other,
     //NoNumerals,
     // ...

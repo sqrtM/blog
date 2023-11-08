@@ -3,8 +3,10 @@ use axum::http::StatusCode;
 use axum::Json;
 
 use crate::models::user::add_user_request::AddUserRequest;
+use crate::models::user::change_password_request::ChangePasswordRequest;
 use crate::models::user::user_error::UserError;
 use crate::models::{AddResponse, FailResponse};
+use crate::repositories::user::change_password::change_password;
 use crate::repositories::user::insert::insert;
 use crate::AppState;
 
@@ -21,6 +23,19 @@ pub async fn add_user(
         Err(e) => Err(FailResponse {
             status: StatusCode::BAD_REQUEST,
             content: Json(e),
+        }),
+    }
+}
+
+pub async fn change_user_password(
+    State(state): State<AppState>,
+    Json(request): Json<ChangePasswordRequest>,
+) -> Result<AddResponse<String>, FailResponse<UserError>> {
+    match request.is_valid() {
+        Ok(_) => change_password(&state.db, request).await,
+        Err(_) => Err(FailResponse {
+            status: StatusCode::BAD_REQUEST,
+            content: Json(UserError::RecoveryKeyInvalid),
         }),
     }
 }

@@ -1,10 +1,10 @@
 use axum::http::StatusCode;
 use axum::Json;
-use sqlx::{query_as, Pool, Postgres};
+use sqlx::{Pool, Postgres, query_as};
 
+use crate::models::{AddResponse, FailResponse};
 use crate::models::user::add_user_request::AddUserRequest;
 use crate::models::user::user_error::UserError;
-use crate::models::{AddResponse, FailResponse};
 
 struct UserRecoveryKey {
     key: Option<String>,
@@ -85,8 +85,8 @@ mod tests {
         let response_one = insert(&pool, request_one.clone()).await;
         let response_two = insert(&pool, request_two.clone()).await;
 
-        assert_eq!(response_one.ok().is_some(), true);
-        assert_eq!(response_two.ok().is_some(), true);
+        assert!(response_one.ok().is_some());
+        assert!(response_two.ok().is_some());
 
         Ok(())
     }
