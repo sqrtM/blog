@@ -5,7 +5,6 @@ pub enum UserError {
     UsernameTaken,
     EmailTaken,
     PasswordInvalid(InvalidInput),
-    EmailInvalid(InvalidInput),
     UsernameInvalid(InvalidInput),
     Unknown,
 }

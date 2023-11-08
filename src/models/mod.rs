@@ -48,10 +48,6 @@ impl Error for UserError {
                     String::from("Password must be shorter than 60 characters.")
                 }
             },
-            UserError::EmailInvalid(e) => match e {
-                InvalidInput::TooLong => String::from("Email must be shorter than 60 characters."),
-                _ => String::from("Error with email"),
-            },
             UserError::UsernameInvalid(e) => match e {
                 InvalidInput::TooLong => {
                     String::from("Username must be shorter than 60 characters.")

@@ -2,7 +2,7 @@ use axum::Router;
 use sqlx::{Pool, Postgres};
 
 use crate::repositories::get_pool;
-use crate::routes::api_routes;
+use crate::routes::{api_routes, routes};
 
 mod controllers;
 mod html;
@@ -23,6 +23,7 @@ async fn main() {
     };
 
     let router = Router::new()
+        .nest("/", routes())
         .nest("/api", api_routes())
         .with_state(app_state);
 
