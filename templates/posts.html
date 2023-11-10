@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% call super() %}
+{% block content %}
+<div>
+    WE IN POSTS
+    <ul>
+        {% for post in posts %}
+        <li>{{ post.id }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
