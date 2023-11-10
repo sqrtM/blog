@@ -1,13 +1,19 @@
-pub mod post;
-pub mod user;
-pub mod reply;
-
-use crate::models::user::user_error::{InvalidInput, UserError};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use serde::Serialize;
 
+use crate::models::user::user_error::{InvalidInput, UserError};
+
+pub mod post;
+pub mod reply;
+pub mod user;
+
+#[derive(Clone)]
+pub struct GetResponse<T: Serialize + PartialEq> {
+    pub(crate) status: StatusCode,
+    pub(crate) content: Json<T>,
+}
 #[derive(Clone)]
 pub struct AddResponse<T: Serialize + PartialEq> {
     pub(crate) status: StatusCode,
@@ -18,6 +24,12 @@ pub struct AddResponse<T: Serialize + PartialEq> {
 pub struct FailResponse<T: Serialize + PartialEq + Error> {
     pub(crate) status: StatusCode,
     pub(crate) content: Json<T>,
+}
+
+impl<T: Serialize + PartialEq> IntoResponse for GetResponse<T> {
+    fn into_response(self) -> Response {
+        (self.status, self.content).into_response()
+    }
 }
 
 impl<T: Serialize + PartialEq> IntoResponse for AddResponse<T> {
