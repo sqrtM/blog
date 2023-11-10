@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 #[derive(Deserialize, Clone)]
 pub struct AddPostRequest {
-    pub author_id: Uuid,
+    pub author_id: Option<Uuid>,
     pub title: String,
     pub content: String,
 }

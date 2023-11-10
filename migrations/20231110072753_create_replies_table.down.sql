@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS reply_relation;
+DROP TABLE IF EXISTS reply;
