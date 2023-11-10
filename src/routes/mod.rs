@@ -8,6 +8,7 @@ use crate::AppState;
 
 mod posts;
 mod users;
+mod replies;
 
 pub fn routes() -> Router<AppState> {
     Router::new()

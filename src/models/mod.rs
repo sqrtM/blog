@@ -1,5 +1,6 @@
 pub mod post;
 pub mod user;
+pub mod reply;
 
 use crate::models::user::user_error::{InvalidInput, UserError};
 use axum::http::StatusCode;
