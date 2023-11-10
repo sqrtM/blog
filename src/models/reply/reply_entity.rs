@@ -55,11 +55,10 @@ impl ReplyEntity {
                 created_at: row.created_at.unwrap(),
                 updated_at: row.updated_at.unwrap(),
                 post_id: row.post_id,
-                parent_reply_ids: row.parent_reply_ids.unwrap_or_else(|| Vec::new()),
-                child_reply_ids: row.child_reply_ids.unwrap_or_else(|| Vec::new()),
+                parent_reply_ids: row.parent_reply_ids.unwrap_or_default(),
+                child_reply_ids: row.child_reply_ids.unwrap_or_default(),
             })
             .collect();
-
         Ok(entities)
     }
 }
