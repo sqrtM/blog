@@ -2,7 +2,6 @@ use axum::extract::State;
 use axum::routing::get;
 use axum::Router;
 use sqlx::Error;
-use tokio::task;
 
 use crate::models::post::post_entity::PostEntity;
 use crate::models::reply::reply_entity::ReplyEntity;
@@ -10,6 +9,7 @@ use crate::routes::posts::posts_routes;
 use crate::routes::replies::replies_routes;
 use crate::routes::users::user_routes;
 use crate::views::post_view::PostView;
+use crate::views::reply_view::ReplyView;
 use crate::views::{AllPostsPage, BaseTemplate};
 use crate::AppState;
 
@@ -40,11 +40,20 @@ async fn root() -> BaseTemplate {
 async fn posts(State(state): State<AppState>) -> AllPostsPage {
     let posts_from_db: Result<Vec<PostEntity>, Error> = PostEntity::get_all(&state.db).await;
 
-    let posts_for_render: Vec<PostView> = posts_from_db
+    let mut posts_for_render: Vec<PostView> = posts_from_db
         .unwrap()
         .into_iter()
-        .map(|post_entity| post_entity.into())
+        .map(PostView::from)
         .collect();
+
+    for post in posts_for_render.as_mut_slice() {
+        post.replies = ReplyEntity::find_with_relations(&state.db, post.id)
+            .await
+            .unwrap_or_else(|_| vec![])
+            .into_iter()
+            .map(ReplyView::from)
+            .collect();
+    }
 
     AllPostsPage {
         posts: posts_for_render,
