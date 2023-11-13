@@ -5,7 +5,7 @@ use uuid::Uuid;
 use crate::models::post::post_entity::PostEntity;
 use crate::views::reply_view::ReplyView;
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct PostView {
     pub id: Uuid,
     pub author_id: Option<Uuid>,

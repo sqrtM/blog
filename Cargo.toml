@@ -20,3 +20,4 @@ tower = "0.4.13"
 tower-http = { version = "0.4.4", features = ["fs"] }
 askama_axum = "0.3.0"
 hyperlocal = "0.8.0"
+futures = "0.3.29"

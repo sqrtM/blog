@@ -6,6 +6,13 @@
     <ul>
         {% for post in posts %}
         <li>{{ post.id }}</li>
+        <li>
+            <ul>  {# Start a nested list for replies #}
+                {% for reply in post.replies %}
+                <li>{{ reply.id }}</li>
+                {% endfor %}
+            </ul>  {# Close the nested list for replies #}
+        </li>
         {% endfor %}
     </ul>
 </div>

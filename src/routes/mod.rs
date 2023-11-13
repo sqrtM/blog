@@ -1,7 +1,10 @@
 use axum::extract::State;
 use axum::routing::get;
 use axum::Router;
-use sqlx::Error;
+use sqlx::{Error, PgPool};
+use std::ops::Deref;
+use std::sync::{Arc, Mutex};
+use tokio::task;
 
 use crate::models::post::post_entity::PostEntity;
 use crate::models::reply::reply_entity::ReplyEntity;
@@ -40,22 +43,51 @@ async fn root() -> BaseTemplate {
 async fn posts(State(state): State<AppState>) -> AllPostsPage {
     let posts_from_db: Result<Vec<PostEntity>, Error> = PostEntity::get_all(&state.db).await;
 
-    let mut posts_for_render: Vec<PostView> = posts_from_db
+    let posts_for_render: Vec<Arc<Mutex<PostView>>> = posts_from_db
         .unwrap()
         .into_iter()
-        .map(PostView::from)
+        .map(|post_entity| Arc::new(Mutex::new(PostView::from(post_entity))))
         .collect();
 
-    for post in posts_for_render.as_mut_slice() {
-        post.replies = ReplyEntity::find_with_relations(&state.db, post.id)
+    async fn fetch_replies(post: Arc<Mutex<PostView>>, db: PgPool) {
+        let id;
+        {
+            let post_guard = post.lock().unwrap();
+            id = post_guard.id;
+        }
+
+        let replies: Vec<ReplyView> = ReplyEntity::find_with_relations(&db, id)
             .await
             .unwrap_or_else(|_| vec![])
             .into_iter()
             .map(ReplyView::from)
             .collect();
+
+        let mut post_guard = post.lock().unwrap();
+        post_guard.replies = replies;
     }
 
-    AllPostsPage {
-        posts: posts_for_render,
+    let mut tasks = Vec::new();
+
+    for post in &posts_for_render {
+        let db = state.db.clone();
+        let post_clone = Arc::clone(post);
+        tasks.push(task::spawn(fetch_replies(post_clone, db)));
     }
+
+    task::block_in_place(|| {
+        tokio::runtime::Runtime::new()
+            .unwrap()
+            .block_on(async { futures::future::join_all(tasks).await });
+    });
+
+    // Extract the PostView instances from the Mutex for the final result
+    let posts: Vec<PostView> = posts_for_render
+        .iter()
+        .map(|post_mutex| post_mutex.lock().unwrap().clone())
+        .collect();
+
+    println!("{:?}", posts);
+
+    AllPostsPage { posts }
 }

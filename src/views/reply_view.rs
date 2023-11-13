@@ -3,7 +3,7 @@ use chrono::{DateTime, Utc};
 use serde::Serialize;
 use uuid::Uuid;
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ReplyView {
     pub id: Uuid,
     pub author_id: Option<Uuid>,
