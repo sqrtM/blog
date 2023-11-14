@@ -1,6 +1,5 @@
-use askama::Template;
-
 use crate::views::post_view::PostView;
+use askama::Template;
 
 pub mod post_view;
 pub mod reply_view;

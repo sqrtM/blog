@@ -3,7 +3,7 @@ use serde::Serialize;
 use sqlx::types::Uuid;
 use sqlx::{query, PgPool};
 
-#[derive(sqlx::FromRow, Serialize, PartialEq)]
+#[derive(sqlx::FromRow, Serialize, PartialEq, Debug)]
 pub struct ReplyEntity {
     pub id: Uuid,
     pub author_id: Option<Uuid>,
