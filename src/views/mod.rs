@@ -1,4 +1,5 @@
 use askama::Template;
+use crate::models::thread::thread_entity::ThreadEntity;
 
 use crate::views::thread_view::ThreadView;
 
@@ -13,4 +14,10 @@ pub struct BaseTemplate;
 #[template(path = "threads.html")]
 pub struct AllThreadsPage {
     pub(crate) threads: Vec<ThreadView>,
+}
+
+#[derive(Template)]
+#[template(path = "thread.html")]
+pub struct NewThread {
+    pub(crate) thread: ThreadView,
 }

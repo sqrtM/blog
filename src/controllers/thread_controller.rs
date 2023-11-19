@@ -11,18 +11,18 @@ use crate::models::reply::reply_entity::ReplyEntity;
 use crate::models::thread::add_thread_request::AddThreadRequest;
 use crate::models::thread::thread_entity::ThreadEntity;
 use crate::models::thread::thread_error::ThreadError;
-use crate::models::{AddResponse, FailResponse};
+use crate::models::FailResponse;
 use crate::views::reply_view::ReplyView;
 use crate::views::thread_view::ThreadView;
-use crate::views::AllThreadsPage;
+use crate::views::{AllThreadsPage, NewThread};
 use crate::AppState;
 
 pub async fn add_thread(
     State(state): State<AppState>,
     Form(request): Form<AddThreadRequest>,
-) -> Result<AddResponse<ThreadEntity>, FailResponse<ThreadError>> {
+) -> Result<NewThread, FailResponse<ThreadError>> {
     match request.is_valid() {
-        Ok(_) => AddThreadRequest::insert(&state.db, request).await,
+        Ok(_) => ThreadEntity::insert(&state.db, request).await,
         Err(_e) => Err(FailResponse {
             status: StatusCode::BAD_REQUEST,
             content: Json(ThreadError),

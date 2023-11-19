@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT * FROM thread;\n        ",
+  "query": "\n        SELECT \n            thread_id, \n            thread_author_id, \n            thread_title, \n            thread_content, \n            thread_created_at, \n            thread_updated_at\n        FROM \n            thread\n        ORDER BY thread_created_at DESC;\n        ",
   "describe": {
     "columns": [
       {
@@ -46,5 +46,5 @@
       true
     ]
   },
-  "hash": "7aef57da45fe268540dbc08039763129d29cfb0c3f7f2a7d5e1fcd7afe98d1c4"
+  "hash": "ba1262fdb899e32d8577eb5973655e640a9283cc0b67b094b1cd78a9c8bbcca9"
 }
