@@ -1,36 +1,36 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT * FROM posts;\n        ",
+  "query": "\n        SELECT * FROM thread;\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "post_id",
+        "name": "thread_id",
         "type_info": "Uuid"
       },
       {
         "ordinal": 1,
-        "name": "post_author_id",
+        "name": "thread_author_id",
         "type_info": "Uuid"
       },
       {
         "ordinal": 2,
-        "name": "post_title",
+        "name": "thread_title",
         "type_info": "Varchar"
       },
       {
         "ordinal": 3,
-        "name": "post_content",
+        "name": "thread_content",
         "type_info": "Text"
       },
       {
         "ordinal": 4,
-        "name": "post_created_at",
+        "name": "thread_created_at",
         "type_info": "Timestamptz"
       },
       {
         "ordinal": 5,
-        "name": "post_updated_at",
+        "name": "thread_updated_at",
         "type_info": "Timestamptz"
       }
     ],
@@ -46,5 +46,5 @@
       true
     ]
   },
-  "hash": "a8b6fbf7c880f5b059cf1e77766cb02298024c8a4d68935559b4b5dd74459e24"
+  "hash": "7aef57da45fe268540dbc08039763129d29cfb0c3f7f2a7d5e1fcd7afe98d1c4"
 }

@@ -2,11 +2,11 @@ use chrono::{DateTime, Utc};
 use serde::Serialize;
 use uuid::Uuid;
 
-use crate::models::post::post_entity::PostEntity;
+use crate::models::thread::thread_entity::ThreadEntity;
 use crate::views::reply_view::ReplyView;
 
 #[derive(Serialize, Clone, Debug)]
-pub struct PostView {
+pub struct ThreadView {
     pub id: String,
     pub author_id: String,
     pub author_name: String,
@@ -17,15 +17,15 @@ pub struct PostView {
     pub replies: Vec<ReplyView>,
 }
 
-impl From<PostEntity> for PostView {
-    fn from(post_entity: PostEntity) -> Self {
-        PostView {
+impl From<ThreadEntity> for ThreadView {
+    fn from(post_entity: ThreadEntity) -> Self {
+        ThreadView {
             id: post_entity.id.hyphenated().to_string(),
             author_id: post_entity
-                    .author_id
-                    .unwrap_or_else(|| Uuid::nil())
-                    .hyphenated()
-                    .to_string(),
+                .author_id
+                .unwrap_or_else(Uuid::nil)
+                .hyphenated()
+                .to_string(),
             author_name: "Anon".to_string(),
             title: post_entity.title,
             content: post_entity.content,

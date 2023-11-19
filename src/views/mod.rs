@@ -1,15 +1,16 @@
-use crate::views::post_view::PostView;
 use askama::Template;
 
-pub mod post_view;
+use crate::views::thread_view::ThreadView;
+
 pub mod reply_view;
+pub mod thread_view;
 
 #[derive(Template)]
 #[template(path = "test.html")]
 pub struct BaseTemplate;
 
 #[derive(Template)]
-#[template(path = "posts.html")]
-pub struct AllPostsPage {
-    pub(crate) posts: Vec<PostView>,
+#[template(path = "threads.html")]
+pub struct AllThreadsPage {
+    pub(crate) threads: Vec<ThreadView>,
 }

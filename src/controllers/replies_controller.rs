@@ -8,11 +8,11 @@ use crate::models::reply::reply_error::ReplyError;
 use crate::models::{FailResponse, GetResponse};
 use crate::AppState;
 
-pub async fn get_replies_from_post(
+pub async fn get_replies_from_thread(
     State(state): State<AppState>,
-    Path(post_id): Path<Uuid>,
+    Path(thread_id): Path<Uuid>,
 ) -> Result<GetResponse<Vec<ReplyEntity>>, FailResponse<ReplyError>> {
-    match ReplyEntity::find_with_relations(&state.db, post_id).await {
+    match ReplyEntity::find_with_relations(&state.db, thread_id).await {
         Ok(entity) => Ok(GetResponse {
             status: StatusCode::ACCEPTED,
             content: Json(entity),

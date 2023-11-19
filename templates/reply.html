@@ -1,0 +1,26 @@
+<style>
+    .reply {
+        margin-top: 15px;
+        padding: 10px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+    }
+
+    .reply:target {
+        background-color: palegoldenrod;
+    }
+</style>
+<li class="reply" id="{{ "reply-{}"|format(reply.id) }}">
+    <div class="reply-info">
+        <span class="reply-author">{{ reply.author_name }}</span>
+        {% for r in reply.parent_reply_ids %}
+            <span id="{{ "reply-{}"|format(r) }}" class="reply-replies"><a
+                        href="{{ "#reply-{}"|format(r) }}">&raquo;{{ r }}</a></span>
+        {% endfor %}
+        <span class="reply-date">{{ reply.created_at|truncate(19) }}</span>
+    </div>
+    <div class="reply-content">
+        {{ reply.content }}
+    </div>
+</li>

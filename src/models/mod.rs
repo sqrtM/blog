@@ -1,13 +1,13 @@
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
 use axum::Json;
+use axum::response::{IntoResponse, Response};
 use serde::Serialize;
 
 use crate::models::user::user_error::{InvalidInput, UserError};
 
-pub mod post;
 pub mod reply;
 pub mod user;
+pub(crate) mod thread;
 
 #[derive(Clone)]
 pub struct GetResponse<T: Serialize + PartialEq> {

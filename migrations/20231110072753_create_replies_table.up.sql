@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS reply
     reply_content    TEXT NOT NULL,
     reply_created_at TIMESTAMPTZ   DEFAULT NOW(),
     reply_updated_at TIMESTAMPTZ   DEFAULT NOW(),
-    reply_post_id    UUID NOT NULL REFERENCES posts (post_id)
+    reply_post_id    UUID NOT NULL REFERENCES thread (thread_id)
 );
 
 CREATE TABLE IF NOT EXISTS reply_relation

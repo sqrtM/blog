@@ -4,37 +4,37 @@ use serde::Deserialize;
 use sqlx::{query_as, Pool, Postgres};
 use uuid::Uuid;
 
-use crate::models::post::post_entity::PostEntity;
-use crate::models::post::post_error::PostError;
+use crate::models::thread::thread_entity::ThreadEntity;
+use crate::models::thread::thread_error::ThreadError;
 use crate::models::{AddResponse, FailResponse};
 
-#[derive(Deserialize, Clone)]
-pub struct AddPostRequest {
+#[derive(Deserialize, Clone, Debug)]
+pub struct AddThreadRequest {
     pub author_id: Option<Uuid>,
     pub title: String,
     pub content: String,
 }
 
-impl AddPostRequest {
-    pub fn is_valid(&self) -> Result<(), PostError> {
+impl AddThreadRequest {
+    pub fn is_valid(&self) -> Result<(), ThreadError> {
         Ok(())
     }
 
     pub async fn insert(
         pool: &Pool<Postgres>,
-        request: AddPostRequest,
-    ) -> Result<AddResponse<PostEntity>, FailResponse<PostError>> {
+        request: AddThreadRequest,
+    ) -> Result<AddResponse<ThreadEntity>, FailResponse<ThreadError>> {
         match query_as(
             // language=PostgreSQL
             "       
-        INSERT INTO posts (post_title, post_content, post_author_id)
+        INSERT INTO thread (thread_title, thread_content, thread_author_id)
         VALUES ($1, $2, $3)
         RETURNING 
-            post_id AS id,
-            post_title AS title,
-            post_content AS content,
-            post_created_at AS created_at,
-            post_updated_at AS updated_at,
+            thread_id AS id,
+            thread_title AS title,
+            thread_content AS content,
+            thread_created_at AS created_at,
+            thread_updated_at AS updated_at,
             (SELECT user_id FROM users WHERE user_id = $3) AS author_id;
         ",
         )
@@ -44,13 +44,13 @@ impl AddPostRequest {
         .fetch_one(pool)
         .await
         {
-            Ok(post) => Ok(AddResponse {
+            Ok(thread) => Ok(AddResponse {
                 status: StatusCode::ACCEPTED,
-                content: Json(post),
+                content: Json(thread),
             }),
             Err(_err) => Err(FailResponse {
                 status: StatusCode::INTERNAL_SERVER_ERROR,
-                content: Json(PostError),
+                content: Json(ThreadError),
             }),
         }
     }
