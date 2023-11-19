@@ -3,21 +3,21 @@ use std::collections::HashSet;
 use chrono::{DateTime, Utc};
 use regex::Regex;
 use serde::Serialize;
-use sqlx::{PgPool, query};
 use sqlx::types::Uuid;
+use sqlx::{query_as, PgPool};
 
-use crate::models::reply::add_reply_to_post_request::AddReplyToPostRequest;
+use crate::models::reply::add_reply_to_thread_request::AddReplyToThreadRequest;
 
 #[derive(sqlx::FromRow, Serialize, PartialEq, Debug)]
 pub struct ReplyEntity {
     pub id: Uuid,
     pub author_id: Option<Uuid>,
     pub content: String,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
     pub post_id: Uuid,
-    pub parent_reply_ids: Vec<Uuid>,
-    pub child_reply_ids: Vec<Uuid>,
+    pub parent_reply_ids: Option<Vec<Option<Uuid>>>,
+    pub child_reply_ids: Option<Vec<Option<Uuid>>>,
 }
 
 impl ReplyEntity {
@@ -25,63 +25,60 @@ impl ReplyEntity {
         pool: &PgPool,
         post_id: Uuid,
     ) -> Result<Vec<Self>, sqlx::Error> {
-        let result = query!(
+        let result = query_as::<_, ReplyEntity>(
             //language=PostgreSQL
             r#"
-        SELECT
-            r.reply_id AS id,
-            r.reply_author_id AS author_id,
-            r.reply_content AS content,
-            r.reply_created_at AS created_at,
-            r.reply_updated_at AS updated_at,
-            r.reply_post_id AS post_id,
-            COALESCE(array_agg(rel.parent_reply_id), ARRAY[]::UUID[]) AS parent_reply_ids,
-            COALESCE(array_agg(rel.child_reply_id), ARRAY[]::UUID[]) AS child_reply_ids
-        FROM
-            reply r
-        LEFT JOIN
-            reply_relation rel ON r.reply_id = rel.child_reply_id
-        WHERE 
-            r.reply_post_id = $1
-        GROUP BY
-            r.reply_id
+            SELECT r.reply_id                                                 AS id,
+                   r.reply_author_id                                          AS author_id,
+                   r.reply_content                                            AS content,
+                   r.reply_created_at                                         AS created_at,
+                   r.reply_updated_at                                         AS updated_at,
+                   r.reply_post_id                                            AS post_id,
+                   COALESCE(array_agg(rel.parent_reply_id), ARRAY []::UUID[]) AS parent_reply_ids,
+                   COALESCE(array_agg(rel.child_reply_id), ARRAY []::UUID[])  AS child_reply_ids
+            FROM reply r
+                     LEFT JOIN
+                 reply_relation rel ON r.reply_id = rel.child_reply_id
+            WHERE r.reply_post_id = $1
+            GROUP BY r.reply_id
         "#,
-            post_id
         )
+        .bind(post_id)
         .fetch_all(pool)
         .await?;
 
-        let entities: Vec<ReplyEntity> = result
-            .into_iter()
-            .map(|row| ReplyEntity {
-                id: row.id,
-                author_id: row.author_id,
-                content: row.content,
-                created_at: row.created_at.unwrap(),
-                updated_at: row.updated_at.unwrap(),
-                post_id: row.post_id,
-                parent_reply_ids: row.parent_reply_ids.unwrap_or_default(),
-                child_reply_ids: row.child_reply_ids.unwrap_or_default(),
-            })
-            .collect();
-        Ok(entities)
+        println!("{:?}", result);
+        Ok(result)
     }
 
     pub async fn insert(
         pool: &PgPool,
-        request: AddReplyToPostRequest,
+        request: AddReplyToThreadRequest,
+        thread_id: Uuid,
     ) -> Result<ReplyEntity, sqlx::Error> {
-        let referenced_reply_ids = extract_referenced_reply_ids(&request.content);
+        let referenced_reply_ids: HashSet<Uuid> = Regex::new(r#">>([a-fA-F0-9-]+)"#)
+            .unwrap()
+            .captures_iter(&request.content)
+            .filter_map(|cap| Uuid::parse_str(&cap[1]).ok())
+            .collect();
 
         let new_reply_id = Uuid::new_v4();
-        let reply = sqlx::query_as::<_, ReplyEntity>(
+        let reply: ReplyEntity = sqlx::query_as::<_, ReplyEntity>(
             "INSERT INTO reply (reply_id, reply_author_id, reply_content, reply_post_id)
-         VALUES ($1, $2, $3, $4)",
+                VALUES ($1, $2, $3, $4)
+                RETURNING reply_id AS id,
+                    reply_author_id AS author_id,
+                    reply_content AS content,
+                    reply_created_at AS created_at,
+                    reply_updated_at AS updated_at,
+                    reply_post_id AS post_id,
+                    ARRAY []::UUID[] AS parent_reply_ids,
+                    ARRAY []::UUID[]  AS child_reply_ids",
         )
         .bind(new_reply_id)
         .bind(request.author_id)
         .bind(request.content)
-        .bind(request.post_id)
+        .bind(thread_id)
         .fetch_one(pool)
         .await?;
 
@@ -95,14 +92,6 @@ impl ReplyEntity {
             .execute(pool)
             .await?;
         }
-
         Ok(reply)
     }
-}
-
-fn extract_referenced_reply_ids(content: &str) -> HashSet<Uuid> {
-    let re = Regex::new(r#">>([a-fA-F0-9-]+)"#).unwrap();
-    re.captures_iter(content)
-        .filter_map(|cap| Uuid::parse_str(&cap[1]).ok())
-        .collect()
 }

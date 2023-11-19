@@ -48,7 +48,7 @@ pub async fn get_threads_with_replies(State(state): State<AppState>) -> AllThrea
 
         let replies: Vec<ReplyView> = ReplyEntity::find_with_relations(&db, id)
             .await
-            .unwrap_or_else(|_| vec![])
+            .unwrap_or_else(|e| panic!("{:?}", e.to_string()))
             .into_iter()
             .map(ReplyView::from)
             .collect();
@@ -71,11 +71,12 @@ pub async fn get_threads_with_replies(State(state): State<AppState>) -> AllThrea
             .block_on(async { futures::future::join_all(tasks).await });
     });
 
-    // Extract the ThreadView instances from the Mutex for the final result
     let threads: Vec<ThreadView> = threads_for_render
         .iter()
         .map(|thread_mutex| thread_mutex.lock().unwrap().clone())
         .collect();
+
+    println!("{:?}", threads);
 
     AllThreadsPage { threads }
 }

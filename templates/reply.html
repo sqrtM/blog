@@ -10,13 +10,40 @@
     .reply:target {
         background-color: palegoldenrod;
     }
+
+    .reply-info {
+        margin-bottom: 10px;
+    }
+
+    .reply-author {
+        font-weight: bold;
+        color: #0077cc; /* Adjust color as needed */
+    }
+
+    .reply-replies {
+        margin-right: 10px;
+    }
+
+    .reply-date {
+        color: #666;
+    }
+
+    .reply-content {
+        margin-top: 10px;
+        color: #444;
+    }
 </style>
 <li class="reply" id="{{ "reply-{}"|format(reply.id) }}">
     <div class="reply-info">
         <span class="reply-author">{{ reply.author_name }}</span>
         {% for r in reply.parent_reply_ids %}
-            <span id="{{ "reply-{}"|format(r) }}" class="reply-replies"><a
-                        href="{{ "#reply-{}"|format(r) }}">&raquo;{{ r }}</a></span>
+            {% match r %}
+            {% when Some with (val) %}
+                <span id="{{ "reply-{}"|format(val) }}" class="reply-replies">
+                    <a href="{{ "#reply-{}"|format(val) }}">&raquo;{{ val }}</a>
+                </span>
+            {% when None %}
+            {% endmatch %}
         {% endfor %}
         <span class="reply-date">{{ reply.created_at|truncate(19) }}</span>
     </div>

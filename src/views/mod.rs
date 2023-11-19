@@ -1,7 +1,6 @@
-use crate::models::thread::thread_entity::ThreadEntity;
-use crate::views::reply_view::ReplyView;
 use askama::Template;
 
+use crate::views::reply_view::ReplyView;
 use crate::views::thread_view::ThreadView;
 
 pub mod reply_view;
