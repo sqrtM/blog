@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO reply_relation (parent_reply_id, child_reply_id)\n             VALUES ($1, $2)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "13d9a9fd595a17516e0447c57947d5c9f1ddb4a6f496ce19110bc73db883515a"
+}

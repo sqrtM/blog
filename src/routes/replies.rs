@@ -7,6 +7,6 @@ use crate::AppState;
 pub fn replies_routes() -> Router<AppState> {
     Router::new().route(
         "/:post_id",
-        get(replies_controller::get_replies_from_thread),
+        get(replies_controller::get_replies_from_thread).post(replies_controller::add_reply),
     )
 }

@@ -1,7 +1,12 @@
+use std::collections::HashSet;
+
 use chrono::{DateTime, Utc};
+use regex::Regex;
 use serde::Serialize;
+use sqlx::{PgPool, query};
 use sqlx::types::Uuid;
-use sqlx::{query, PgPool};
+
+use crate::models::reply::add_reply_to_post_request::AddReplyToPostRequest;
 
 #[derive(sqlx::FromRow, Serialize, PartialEq, Debug)]
 pub struct ReplyEntity {
@@ -61,4 +66,43 @@ impl ReplyEntity {
             .collect();
         Ok(entities)
     }
+
+    pub async fn insert(
+        pool: &PgPool,
+        request: AddReplyToPostRequest,
+    ) -> Result<ReplyEntity, sqlx::Error> {
+        let referenced_reply_ids = extract_referenced_reply_ids(&request.content);
+
+        let new_reply_id = Uuid::new_v4();
+        let reply = sqlx::query_as::<_, ReplyEntity>(
+            "INSERT INTO reply (reply_id, reply_author_id, reply_content, reply_post_id)
+         VALUES ($1, $2, $3, $4)",
+        )
+        .bind(new_reply_id)
+        .bind(request.author_id)
+        .bind(request.content)
+        .bind(request.post_id)
+        .fetch_one(pool)
+        .await?;
+
+        for referenced_reply_id in referenced_reply_ids {
+            sqlx::query!(
+                "INSERT INTO reply_relation (parent_reply_id, child_reply_id)
+             VALUES ($1, $2)",
+                referenced_reply_id,
+                new_reply_id
+            )
+            .execute(pool)
+            .await?;
+        }
+
+        Ok(reply)
+    }
+}
+
+fn extract_referenced_reply_ids(content: &str) -> HashSet<Uuid> {
+    let re = Regex::new(r#">>([a-fA-F0-9-]+)"#).unwrap();
+    re.captures_iter(content)
+        .filter_map(|cap| Uuid::parse_str(&cap[1]).ok())
+        .collect()
 }
