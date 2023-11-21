@@ -4,7 +4,7 @@
                     {{ thread.author_name }}
                 </span>
         <span class="thread-title">{{ thread.title }}</span>
-        <span class="thread-date">{{ thread.created_at }}</span>
+        <span class="thread-date">{{ thread.created_at|format_utc_datetime }}</span>
     </div>
     <div class="thread-content">
         {{ thread.content }}

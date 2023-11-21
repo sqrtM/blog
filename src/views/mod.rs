@@ -6,6 +6,23 @@ use crate::views::thread_view::ThreadView;
 pub mod reply_view;
 pub mod thread_view;
 
+mod filters {
+    use askama::Error;
+    use chrono::{DateTime, Utc};
+
+    pub fn replace_reply_syntax(input: &str) -> Result<String, Error> {
+        let regex = regex::Regex::new(r#">>([a-zA-Z0-9-]+)"#).unwrap();
+
+        Ok(regex
+            .replace_all(input, "<a href='#reply-$1'>&raquo;$1</a>")
+            .to_string())
+    }
+
+    pub fn format_utc_datetime(dt: &DateTime<Utc>) -> Result<String, Error> {
+        Ok(dt.format("%Y-%m-%d %H:%M (%Z)").to_string())
+    }
+}
+
 #[derive(Template)]
 #[template(path = "test.html")]
 pub struct BaseTemplate;
