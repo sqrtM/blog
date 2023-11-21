@@ -28,26 +28,25 @@ impl ReplyEntity {
         let result = query_as::<_, ReplyEntity>(
             //language=PostgreSQL
             r#"
-            SELECT r.reply_id                                                 AS id,
-                   r.reply_author_id                                          AS author_id,
-                   r.reply_content                                            AS content,
-                   r.reply_created_at                                         AS created_at,
-                   r.reply_updated_at                                         AS updated_at,
-                   r.reply_post_id                                            AS post_id,
-                   COALESCE(array_agg(rel.parent_reply_id), ARRAY []::UUID[]) AS parent_reply_ids,
-                   COALESCE(array_agg(rel.child_reply_id), ARRAY []::UUID[])  AS child_reply_ids
+            SELECT r.reply_id AS id,
+                   r.reply_author_id AS author_id,
+                   r.reply_content AS content,
+                   r.reply_created_at AS created_at,
+                   r.reply_updated_at AS updated_at,
+                   r.reply_post_id AS post_id,
+                   COALESCE(array_agg(parent.parent_reply_id), ARRAY[]::UUID[]) AS parent_reply_ids,
+                   COALESCE(array_agg(child.child_reply_id), ARRAY[]::UUID[]) AS child_reply_ids
             FROM reply r
-                     LEFT JOIN
-                 reply_relation rel ON r.reply_id = rel.child_reply_id
+            LEFT JOIN reply_relation parent ON r.reply_id = parent.child_reply_id
+            LEFT JOIN reply_relation child ON r.reply_id = child.parent_reply_id
             WHERE r.reply_post_id = $1
-            GROUP BY r.reply_id
+            GROUP BY r.reply_id;
         "#,
         )
         .bind(post_id)
         .fetch_all(pool)
         .await?;
 
-        println!("{:?}", result);
         Ok(result)
     }
 
@@ -56,11 +55,13 @@ impl ReplyEntity {
         request: AddReplyToThreadRequest,
         thread_id: Uuid,
     ) -> Result<ReplyEntity, sqlx::Error> {
-        let referenced_reply_ids: HashSet<Uuid> = Regex::new(r#">>([a-fA-F0-9-]+)"#)
-            .unwrap()
-            .captures_iter(&request.content)
-            .filter_map(|cap| Uuid::parse_str(&cap[1]).ok())
-            .collect();
+        let referenced_reply_ids: HashSet<Uuid> =
+            Regex::new(r#">>([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"#)
+                .unwrap()
+                .captures_iter(&request.content)
+                .filter_map(|cap| Uuid::parse_str(&cap[1]).ok())
+                .collect();
+        println!("{:?}", referenced_reply_ids);
 
         let new_reply_id = Uuid::new_v4();
         let reply: ReplyEntity = sqlx::query_as::<_, ReplyEntity>(

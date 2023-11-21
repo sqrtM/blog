@@ -76,7 +76,5 @@ pub async fn get_threads_with_replies(State(state): State<AppState>) -> AllThrea
         .map(|thread_mutex| thread_mutex.lock().unwrap().clone())
         .collect();
 
-    println!("{:?}", threads);
-
     AllThreadsPage { threads }
 }

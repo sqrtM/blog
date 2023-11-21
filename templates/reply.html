@@ -1,46 +1,21 @@
-<style>
-    .reply {
-        margin-top: 15px;
-        padding: 10px;
-        border: 1px solid #eee;
-        border-radius: 4px;
-        background-color: #f9f9f9;
-    }
-
-    .reply:target {
-        background-color: palegoldenrod;
-    }
-
-    .reply-info {
-        margin-bottom: 10px;
-    }
-
-    .reply-author {
-        font-weight: bold;
-        color: #0077cc; /* Adjust color as needed */
-    }
-
-    .reply-replies {
-        margin-right: 10px;
-    }
-
-    .reply-date {
-        color: #666;
-    }
-
-    .reply-content {
-        margin-top: 10px;
-        color: #444;
-    }
-</style>
 <li class="reply" id="{{ "reply-{}"|format(reply.id) }}">
     <div class="reply-info">
         <span class="reply-author">{{ reply.author_name }}</span>
         {% for r in reply.parent_reply_ids %}
             {% match r %}
-            {% when Some with (val) %}
-                <span id="{{ "reply-{}"|format(val) }}" class="reply-replies">
-                    <a href="{{ "#reply-{}"|format(val) }}">&raquo;{{ val }}</a>
+            {% when Some with (parent) %}
+                <span id="parent-{{ "reply-{}"|format(parent) }}" class="reply-replies">
+                    <a href="{{ "#reply-{}"|format(parent) }}">parent &raquo;{{ parent }}</a>
+                </span>
+            {% when None %}
+            {% endmatch %}
+        {% endfor %}
+
+        {% for r in reply.child_reply_ids %}
+            {% match r %}
+            {% when Some with (child) %}
+                <span id="child-{{ "reply-{}"|format(child) }}" class="reply-replies">
+                    <a href="{{ "#reply-{}"|format(child) }}">child &raquo;{{ child }}</a>
                 </span>
             {% when None %}
             {% endmatch %}
