@@ -2,6 +2,8 @@ use std::collections::HashSet;
 
 use chrono::{DateTime, Utc};
 use regex::Regex;
+use sanitize_html::rules::predefined::DEFAULT;
+use sanitize_html::sanitize_str;
 use serde::Serialize;
 use sqlx::types::Uuid;
 use sqlx::{query_as, PgPool};
@@ -50,6 +52,9 @@ impl ReplyEntity {
         Ok(result)
     }
 
+    /// On insert, content is sanitized of HTML tags.
+    /// Then, HTML tags which are allowed are deliberately
+    /// reinserted when serving the HTML to the user.
     pub async fn insert(
         pool: &PgPool,
         request: AddReplyToThreadRequest,
@@ -61,9 +66,9 @@ impl ReplyEntity {
                 .captures_iter(&request.content)
                 .filter_map(|cap| Uuid::parse_str(&cap[1]).ok())
                 .collect();
-        println!("{:?}", referenced_reply_ids);
 
         let new_reply_id = Uuid::new_v4();
+        let content = sanitize_str(&DEFAULT, &request.content).unwrap();
         let reply: ReplyEntity = sqlx::query_as::<_, ReplyEntity>(
             "INSERT INTO reply (reply_id, reply_author_id, reply_content, reply_post_id)
                 VALUES ($1, $2, $3, $4)
@@ -78,7 +83,7 @@ impl ReplyEntity {
         )
         .bind(new_reply_id)
         .bind(request.author_id)
-        .bind(request.content)
+        .bind(content)
         .bind(thread_id)
         .fetch_one(pool)
         .await?;

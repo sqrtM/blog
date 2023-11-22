@@ -11,8 +11,7 @@ mod filters {
     use chrono::{DateTime, Utc};
 
     pub fn replace_reply_syntax(input: &str) -> Result<String, Error> {
-        let regex = regex::Regex::new(r#">>([a-zA-Z0-9-]+)"#).unwrap();
-
+        let regex = regex::Regex::new(r#"&gt;&gt;([a-zA-Z0-9-]+)"#).unwrap();
         Ok(regex
             .replace_all(input, "<a href='#reply-$1'>&raquo;$1</a>")
             .to_string())
