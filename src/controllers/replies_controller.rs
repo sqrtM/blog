@@ -32,7 +32,6 @@ pub async fn add_reply(
     Path(thread_id): Path<Uuid>,
     Form(request): Form<AddReplyToThreadRequest>,
 ) -> Result<NewReply, FailResponse<ReplyError>> {
-    println!("{:?}", request);
     match ReplyEntity::insert(&state.db, request, thread_id).await {
         Ok(entity) => Ok(NewReply {
             reply: ReplyView::from(entity),

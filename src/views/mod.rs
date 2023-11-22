@@ -1,7 +1,6 @@
-use crate::views::board_view::BoardView;
 use askama::Template;
-use uuid::Uuid;
 
+use crate::views::board_view::BoardView;
 use crate::views::reply_view::ReplyView;
 use crate::views::thread_view::ThreadView;
 

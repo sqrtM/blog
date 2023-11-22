@@ -1,4 +1,3 @@
-
 ALTER TABLE thread
     DROP CONSTRAINT IF EXISTS thread_board_id_fkey;
 

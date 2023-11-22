@@ -2,15 +2,14 @@ use axum::http::StatusCode;
 use axum::Json;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
-use sqlx::{PgPool, Pool, Postgres, query, query_as};
 use sqlx::types::Uuid;
-use uuid::uuid;
+use sqlx::{query, query_as, PgPool, Pool, Postgres};
 
-use crate::models::FailResponse;
 use crate::models::thread::add_thread_request::AddThreadRequest;
 use crate::models::thread::thread_error::ThreadError;
-use crate::views::NewThread;
+use crate::models::FailResponse;
 use crate::views::thread_view::ThreadView;
+use crate::views::NewThread;
 
 #[derive(sqlx::FromRow, Serialize, PartialEq)]
 pub struct ThreadEntity {
@@ -80,8 +79,8 @@ impl ThreadEntity {
         "#,
             board_id
         )
-            .fetch_all(pool)
-            .await?;
+        .fetch_all(pool)
+        .await?;
 
         let threads: Vec<ThreadEntity> = result
             .into_iter()
@@ -102,6 +101,7 @@ impl ThreadEntity {
     pub async fn insert(
         pool: &Pool<Postgres>,
         request: AddThreadRequest,
+        board_id: Uuid,
     ) -> Result<NewThread, FailResponse<ThreadError>> {
         match query_as::<_, ThreadEntity>(
             // language=PostgreSQL
@@ -121,7 +121,7 @@ impl ThreadEntity {
         .bind(request.title)
         .bind(request.content)
         .bind(request.author_id)
-        .bind(uuid!("27790de4-4a44-4ee5-b071-72133afc4b7a"))
+        .bind(board_id)
         .fetch_one(pool)
         .await
         {

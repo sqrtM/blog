@@ -129,8 +129,8 @@ impl BoardEntity {
                    b.board_authorized_only                                                                       AS authorized_only,
                    COUNT(t.thread_id)                                                                            AS total_threads,
                    MAX(GREATEST(t.thread_created_at,
-                                COALESCE(max_reply.reply_created_at, t.thread_created_at)))                      AS most_recent_post_time,
-                   MAX(t.thread_title)                                                                           AS most_recent_post_title
+                                COALESCE(max_reply.reply_created_at, b.board_created_at)))                       AS most_recent_post_time,
+                   MAX(COALESCE(t.thread_title, ''))                                                             AS most_recent_post_title
             FROM board b
                      LEFT JOIN
                  thread t ON b.board_id = t.thread_board_id

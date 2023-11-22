@@ -20,10 +20,11 @@ use crate::AppState;
 
 pub async fn add_thread(
     State(state): State<AppState>,
+    Path(board_id): Path<Uuid>,
     Form(request): Form<AddThreadRequest>,
 ) -> Result<NewThread, FailResponse<ThreadError>> {
     match request.is_valid() {
-        Ok(_) => ThreadEntity::insert(&state.db, request).await,
+        Ok(_) => ThreadEntity::insert(&state.db, request, board_id).await,
         Err(_e) => Err(FailResponse {
             status: StatusCode::BAD_REQUEST,
             content: Json(ThreadError),
@@ -35,7 +36,8 @@ pub async fn get_threads_with_replies(
     State(state): State<AppState>,
     Path(board_id): Path<Uuid>,
 ) -> ThreadsPage {
-    let threads_from_db: Result<Vec<ThreadEntity>, Error> = ThreadEntity::get_all(&state.db).await;
+    let threads_from_db: Result<Vec<ThreadEntity>, Error> =
+        ThreadEntity::get_by_board_id(&state.db, board_id).await;
 
     let threads_for_render: Vec<Arc<Mutex<ThreadView>>> = threads_from_db
         .unwrap()
