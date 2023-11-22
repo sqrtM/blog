@@ -70,6 +70,7 @@ impl ReplyEntity {
         let new_reply_id = Uuid::new_v4();
         let content = sanitize_str(&DEFAULT, &request.content).unwrap();
         let reply: ReplyEntity = sqlx::query_as::<_, ReplyEntity>(
+            //language=PostgreSQL
             "INSERT INTO reply (reply_id, reply_author_id, reply_content, reply_post_id)
                 VALUES ($1, $2, $3, $4)
                 RETURNING reply_id AS id,
@@ -90,8 +91,11 @@ impl ReplyEntity {
 
         for referenced_reply_id in referenced_reply_ids {
             sqlx::query!(
-                "INSERT INTO reply_relation (parent_reply_id, child_reply_id)
-             VALUES ($1, $2)",
+                //language=PostgreSQL
+                "INSERT INTO 
+                    reply_relation (parent_reply_id, child_reply_id)
+                VALUES 
+                    ($1, $2)",
                 referenced_reply_id,
                 new_reply_id
             )

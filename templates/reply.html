@@ -7,7 +7,7 @@
             {% match r %}
             {% when Some with (child) %}
                 <span id="child-{{ "reply-{}"|format(child) }}" class="reply-replies">
-                <a href="{{ "#reply-{}"|format(child) }}">&raquo;{{ child }}</a>
+                <a href="{{ "#reply-{}"|format(child) }}" class="reply-link">&raquo;{{ child }}</a>
             </span>
             {% when None %}
             {% endmatch %}
