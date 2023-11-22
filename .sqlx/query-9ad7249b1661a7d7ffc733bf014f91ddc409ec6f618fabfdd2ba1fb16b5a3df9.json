@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT \n            thread_id, \n            thread_author_id, \n            thread_title, \n            thread_content, \n            thread_created_at, \n            thread_updated_at\n        FROM \n            thread\n        ORDER BY thread_created_at DESC;\n        ",
+  "query": "\n        SELECT \n            thread_id, \n            thread_author_id, \n            thread_title, \n            thread_content, \n            thread_created_at, \n            thread_updated_at,\n            thread_board_id\n        FROM \n            thread\n        ORDER BY thread_created_at DESC;\n        ",
   "describe": {
     "columns": [
       {
@@ -32,6 +32,11 @@
         "ordinal": 5,
         "name": "thread_updated_at",
         "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "thread_board_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {
@@ -43,8 +48,9 @@
       false,
       false,
       true,
+      true,
       true
     ]
   },
-  "hash": "ba1262fdb899e32d8577eb5973655e640a9283cc0b67b094b1cd78a9c8bbcca9"
+  "hash": "9ad7249b1661a7d7ffc733bf014f91ddc409ec6f618fabfdd2ba1fb16b5a3df9"
 }

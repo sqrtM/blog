@@ -4,6 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::Serialize;
 use sqlx::types::Uuid;
 use sqlx::{query, query_as, PgPool, Pool, Postgres};
+use uuid::uuid;
 
 use crate::models::thread::add_thread_request::AddThreadRequest;
 use crate::models::thread::thread_error::ThreadError;
@@ -19,6 +20,7 @@ pub struct ThreadEntity {
     pub content: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+    pub board_id: Uuid,
 }
 
 impl ThreadEntity {
@@ -32,7 +34,8 @@ impl ThreadEntity {
             thread_title, 
             thread_content, 
             thread_created_at, 
-            thread_updated_at
+            thread_updated_at,
+            thread_board_id
         FROM 
             thread
         ORDER BY thread_created_at DESC;
@@ -50,6 +53,7 @@ impl ThreadEntity {
                 content: row.thread_content,
                 created_at: row.thread_created_at.unwrap(),
                 updated_at: row.thread_updated_at.unwrap(),
+                board_id: row.thread_board_id.unwrap(),
             })
             .collect::<Vec<ThreadEntity>>();
 
@@ -63,20 +67,22 @@ impl ThreadEntity {
         match query_as::<_, ThreadEntity>(
             // language=PostgreSQL
             "       
-        INSERT INTO thread (thread_title, thread_content, thread_author_id)
-        VALUES ($1, $2, $3)
+        INSERT INTO thread (thread_title, thread_content, thread_author_id, thread_board_id)
+        VALUES ($1, $2, $3, $4)
         RETURNING 
             thread_id AS id,
             thread_title AS title,
             thread_content AS content,
             thread_created_at AS created_at,
             thread_updated_at AS updated_at,
+            thread_board_id AS board_id,
             (SELECT user_id FROM users WHERE user_id = $3) AS author_id;
         ",
         )
         .bind(request.title)
         .bind(request.content)
         .bind(request.author_id)
+        .bind(uuid!("27790de4-4a44-4ee5-b071-72133afc4b7a"))
         .fetch_one(pool)
         .await
         {

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% call super() %}
+{% block content %}
+    <body>
+    <h1>Boards</h1>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Board Name</th>
+            <th>Description</th>
+            <th>Total Threads</th>
+            <th>Most Recent Post</th>
+            <th>Post Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for board in boards %}
+            <tr>
+                <td>{{ board.name }}</td>
+                <td>{{ board.description }}</td>
+                <td>{{ board.total_threads }}</td>
+                <td>{{ board.most_recent_post_title }}</td>
+                <td>{{ board.most_recent_post_time }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </body>
+{% endblock %}

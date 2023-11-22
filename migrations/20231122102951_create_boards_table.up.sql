@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS board
 );
 
 ALTER TABLE thread
-    ADD COLUMN board_id UUID REFERENCES board (board_id);
+    ADD COLUMN thread_board_id UUID REFERENCES board (board_id);

@@ -7,7 +7,8 @@ use crate::models::user::user_error::{InvalidInput, UserError};
 
 pub mod reply;
 pub mod user;
-pub(crate) mod thread;
+pub mod thread;
+pub mod board;
 
 #[derive(Clone)]
 pub struct GetResponse<T: Serialize + PartialEq> {

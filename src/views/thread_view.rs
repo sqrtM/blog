@@ -15,6 +15,7 @@ pub struct ThreadView {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub replies: Vec<ReplyView>,
+    pub board_id: String,
 }
 
 impl From<ThreadEntity> for ThreadView {
@@ -32,6 +33,7 @@ impl From<ThreadEntity> for ThreadView {
             created_at: post_entity.created_at,
             updated_at: post_entity.updated_at,
             replies: Vec::new(),
+            board_id: post_entity.board_id.hyphenated().to_string(),
         }
     }
 }

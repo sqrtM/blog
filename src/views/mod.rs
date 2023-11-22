@@ -1,10 +1,12 @@
 use askama::Template;
+use crate::views::board_view::BoardView;
 
 use crate::views::reply_view::ReplyView;
 use crate::views::thread_view::ThreadView;
 
 pub mod reply_view;
 pub mod thread_view;
+pub mod board_view;
 
 mod filters {
     use askama::Error;
@@ -25,6 +27,12 @@ mod filters {
 #[derive(Template)]
 #[template(path = "home.html")]
 pub struct HomeTemplate;
+
+#[derive(Template)]
+#[template(path = "boards.html")]
+pub struct AllBoardsPage {
+    pub boards: Vec<BoardView>
+}
 
 #[derive(Template)]
 #[template(path = "threads.html")]
