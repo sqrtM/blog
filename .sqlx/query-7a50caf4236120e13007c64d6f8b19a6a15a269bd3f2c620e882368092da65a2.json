@@ -1,0 +1,58 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT \n            thread_id, \n            thread_author_id, \n            thread_title, \n            thread_content, \n            thread_created_at, \n            thread_updated_at,\n            thread_board_id\n        FROM \n            thread\n        WHERE \n            thread_board_id = $1\n        ORDER BY thread_created_at DESC;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "thread_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "thread_author_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "thread_title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "thread_content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "thread_created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "thread_updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "thread_board_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "7a50caf4236120e13007c64d6f8b19a6a15a269bd3f2c620e882368092da65a2"
+}

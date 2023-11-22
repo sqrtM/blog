@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::Serialize;
-use sqlx::{query, PgPool};
+use sqlx::{query, query_as, PgPool};
 use uuid::Uuid;
 
 #[derive(sqlx::FromRow, Serialize, PartialEq, Debug)]
@@ -52,43 +52,53 @@ impl BoardEntity {
         Ok(boards)
     }
 
-    pub async fn get_board_info(
+    pub async fn get_by_id(pool: &PgPool, board_id: i32) -> Result<Self, sqlx::Error> {
+        let board = query_as::<_, Self>(
+            //language=PostgreSQL
+            r#"
+        SELECT 
+            board_id, 
+            board_name, 
+            board_description, 
+            board_authorized_only
+        FROM 
+            board
+        WHERE
+            board_id = $1
+        "#,
+        )
+        .bind(board_id)
+        .fetch_one(pool)
+        .await?;
+        Ok(board)
+    }
+
+    pub async fn get_all_board_info(
         pool: &PgPool,
-        id: Uuid,
     ) -> Result<Vec<BoardEntityWithThreadInfo>, sqlx::Error> {
         let result = query!(
             //language=PostgreSQL
             r#"
-            SELECT
-                b.board_id,
-                b.board_name,
-                b.board_description,
-                b.board_authorized_only,
-                COUNT(t.thread_id) AS total_threads,
-                MAX(GREATEST(t.thread_created_at, COALESCE(max_reply.reply_created_at, t.thread_created_at))) AS most_recent_post_time,
-                MAX(t.thread_title) AS most_recent_post_title
-            FROM
-                board b
-            LEFT JOIN
-                thread t ON b.board_id = t.thread_board_id
-            LEFT JOIN (
-                SELECT
-                    r.reply_post_id,
-                    MAX(r.reply_created_at) AS reply_created_at
-                FROM
-                    reply r
-                GROUP BY
-                    r.reply_post_id
-            ) max_reply ON t.thread_id = max_reply.reply_post_id
-            WHERE
-                b.board_id = $1
-            GROUP BY
-                b.board_id, b.board_name, b.board_description, b.board_authorized_only;
+            SELECT b.board_id,
+                   b.board_name,
+                   b.board_description,
+                   b.board_authorized_only,
+                   COUNT(t.thread_id)                                                                            AS total_threads,
+                   MAX(GREATEST(t.thread_created_at,
+                                COALESCE(max_reply.reply_created_at, t.thread_created_at)))                      AS most_recent_post_time,
+                   MAX(t.thread_title)                                                                           AS most_recent_post_title
+            FROM board b
+                     LEFT JOIN
+                 thread t ON b.board_id = t.thread_board_id
+                     LEFT JOIN (SELECT r.reply_post_id,
+                                       MAX(r.reply_created_at) AS reply_created_at
+                                FROM reply r
+                                GROUP BY r.reply_post_id) max_reply ON t.thread_id = max_reply.reply_post_id
+            GROUP BY b.board_id, b.board_name, b.board_description, b.board_authorized_only;
         "#,
-            id
         )
-        .fetch_all(pool)
-        .await?;
+            .fetch_all(pool)
+            .await?;
 
         let boards: Vec<BoardEntityWithThreadInfo> = result
             .into_iter()
@@ -104,5 +114,38 @@ impl BoardEntity {
             .collect::<Vec<BoardEntityWithThreadInfo>>();
 
         Ok(boards)
+    }
+
+    pub async fn get_board_info_by_id(
+        pool: &PgPool,
+        id: Uuid,
+    ) -> Result<BoardEntityWithThreadInfo, sqlx::Error> {
+        let board = query_as::<_, BoardEntityWithThreadInfo>(
+            //language=PostgreSQL
+            r#"
+            SELECT b.board_id                                                                                    AS id,
+                   b.board_name                                                                                  AS name,
+                   b.board_description                                                                           AS description,
+                   b.board_authorized_only                                                                       AS authorized_only,
+                   COUNT(t.thread_id)                                                                            AS total_threads,
+                   MAX(GREATEST(t.thread_created_at,
+                                COALESCE(max_reply.reply_created_at, t.thread_created_at)))                      AS most_recent_post_time,
+                   MAX(t.thread_title)                                                                           AS most_recent_post_title
+            FROM board b
+                     LEFT JOIN
+                 thread t ON b.board_id = t.thread_board_id
+                     LEFT JOIN (SELECT r.reply_post_id,
+                                       MAX(r.reply_created_at) AS reply_created_at
+                                FROM reply r
+                                GROUP BY r.reply_post_id) max_reply ON t.thread_id = max_reply.reply_post_id
+            WHERE b.board_id = $1
+            GROUP BY b.board_id, b.board_name, b.board_description, b.board_authorized_only;
+        "#,
+        )
+        .bind(id)
+        .fetch_one(pool)
+        .await?;
+
+        Ok(board)
     }
 }

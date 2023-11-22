@@ -1,18 +1,21 @@
 use std::sync::{Arc, Mutex};
 
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::{Form, Json};
 use sqlx::Error;
 use tokio::task;
+use uuid::Uuid;
 
+use crate::models::board::board_entity::BoardEntity;
 use crate::models::thread::add_thread_request::AddThreadRequest;
 use crate::models::thread::thread_entity::ThreadEntity;
 use crate::models::thread::thread_error::ThreadError;
 use crate::models::FailResponse;
 use crate::services::fetch;
+use crate::views::board_view::BoardView;
 use crate::views::thread_view::ThreadView;
-use crate::views::{AllThreadsPage, NewThread};
+use crate::views::{NewThread, ThreadsPage};
 use crate::AppState;
 
 pub async fn add_thread(
@@ -28,7 +31,10 @@ pub async fn add_thread(
     }
 }
 
-pub async fn get_threads_with_replies(State(state): State<AppState>) -> AllThreadsPage {
+pub async fn get_threads_with_replies(
+    State(state): State<AppState>,
+    Path(board_id): Path<Uuid>,
+) -> ThreadsPage {
     let threads_from_db: Result<Vec<ThreadEntity>, Error> = ThreadEntity::get_all(&state.db).await;
 
     let threads_for_render: Vec<Arc<Mutex<ThreadView>>> = threads_from_db
@@ -56,5 +62,11 @@ pub async fn get_threads_with_replies(State(state): State<AppState>) -> AllThrea
         .map(|thread_mutex| thread_mutex.lock().unwrap().clone())
         .collect();
 
-    AllThreadsPage { threads }
+    let board = BoardView::from(
+        BoardEntity::get_board_info_by_id(&state.db, board_id)
+            .await
+            .unwrap_or_else(|e| panic!("{}", e.to_string())),
+    );
+
+    ThreadsPage { board, threads }
 }

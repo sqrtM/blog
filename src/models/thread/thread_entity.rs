@@ -2,15 +2,15 @@ use axum::http::StatusCode;
 use axum::Json;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
+use sqlx::{PgPool, Pool, Postgres, query, query_as};
 use sqlx::types::Uuid;
-use sqlx::{query, query_as, PgPool, Pool, Postgres};
 use uuid::uuid;
 
+use crate::models::FailResponse;
 use crate::models::thread::add_thread_request::AddThreadRequest;
 use crate::models::thread::thread_error::ThreadError;
-use crate::models::FailResponse;
-use crate::views::thread_view::ThreadView;
 use crate::views::NewThread;
+use crate::views::thread_view::ThreadView;
 
 #[derive(sqlx::FromRow, Serialize, PartialEq)]
 pub struct ThreadEntity {
@@ -43,6 +43,45 @@ impl ThreadEntity {
         )
         .fetch_all(pool)
         .await?;
+
+        let threads: Vec<ThreadEntity> = result
+            .into_iter()
+            .map(|row| ThreadEntity {
+                id: row.thread_id,
+                author_id: row.thread_author_id,
+                title: row.thread_title,
+                content: row.thread_content,
+                created_at: row.thread_created_at.unwrap(),
+                updated_at: row.thread_updated_at.unwrap(),
+                board_id: row.thread_board_id.unwrap(),
+            })
+            .collect::<Vec<ThreadEntity>>();
+
+        Ok(threads)
+    }
+
+    pub async fn get_by_board_id(pool: &PgPool, board_id: Uuid) -> Result<Vec<Self>, sqlx::Error> {
+        let result = query!(
+            //language=PostgreSQL
+            r#"
+        SELECT 
+            thread_id, 
+            thread_author_id, 
+            thread_title, 
+            thread_content, 
+            thread_created_at, 
+            thread_updated_at,
+            thread_board_id
+        FROM 
+            thread
+        WHERE 
+            thread_board_id = $1
+        ORDER BY thread_created_at DESC;
+        "#,
+            board_id
+        )
+            .fetch_all(pool)
+            .await?;
 
         let threads: Vec<ThreadEntity> = result
             .into_iter()

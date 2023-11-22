@@ -2,8 +2,8 @@
 {% call super() %}
 {% block content %}
     <div class="threads-container">
-        <h2>THREADS</h2>
-
+        <h2>{{ board.name }}</h2>
+        <p>{{ board.description }}</p>
         <div id="new-thread-form">
             <h3>Create a New Thread</h3>
             <form hx-post="/forum" hx-swap="outerHTML" hx-target="#new-thread-form">
