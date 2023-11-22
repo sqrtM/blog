@@ -23,8 +23,8 @@ mod filters {
 }
 
 #[derive(Template)]
-#[template(path = "test.html")]
-pub struct BaseTemplate;
+#[template(path = "home.html")]
+pub struct HomeTemplate;
 
 #[derive(Template)]
 #[template(path = "threads.html")]
