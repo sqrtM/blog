@@ -43,17 +43,21 @@ async fn main() {
 mod tests {
     use axum::Router;
     use axum_test::TestServer;
+    use sqlx::PgPool;
 
     use crate::AppState;
-    use crate::repositories::get_pool;
     use crate::routes::{api_routes, routes};
 
     #[tokio::test]
     async fn it_should_get() {
-        dotenvy::dotenv().expect("mfw no env");
+        // load .env but don't crash yet if it isn't found.
+        match dotenvy::dotenv() {
+            Ok(_) => {}
+            Err(_) => {}
+        }
 
         let app_state = AppState {
-            db: get_pool().await,
+            db: PgPool::connect_lazy(&std::env::var("DATABASE_URL").expect("DATABASE_URL must be set")).unwrap()
         };
 
         let app = Router::new()

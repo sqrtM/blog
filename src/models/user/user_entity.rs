@@ -122,7 +122,7 @@ impl UserEntity {
 }
 
 #[cfg(test)]
-mod tests {
+mod db_tests {
     use sqlx::PgPool;
 
     use crate::models::user::add_user_request::AddUserRequest;
@@ -130,6 +130,7 @@ mod tests {
     use crate::models::user::user_error::UserError;
 
     #[sqlx::test]
+    #[ignore]
     async fn insert_successfully(pool: PgPool) -> sqlx::Result<()> {
         let request_one = AddUserRequest {
             username: "one".to_string(),
@@ -151,6 +152,7 @@ mod tests {
     }
 
     #[sqlx::test]
+    #[ignore]
     async fn insert_fail_on_duplicate_username(pool: PgPool) -> () {
         let request_one = AddUserRequest {
             username: "one".to_string(),
