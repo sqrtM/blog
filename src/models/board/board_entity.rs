@@ -1,21 +1,29 @@
 use chrono::{DateTime, Utc};
 use serde::Serialize;
-use sqlx::{query, query_as, PgPool};
+use sqlx::{FromRow, PgPool, query, query_as};
 use uuid::Uuid;
 
-#[derive(sqlx::FromRow, Serialize, PartialEq, Debug)]
+#[derive(sqlx::FromRow, Serialize, PartialEq, Debug, Default)]
 pub struct BoardEntity {
+    #[sqlx(rename = "board_id")]
     pub id: Uuid,
+    #[sqlx(rename = "board_name")]
     pub name: String,
+    #[sqlx(rename = "board_description")]
     pub description: String,
+    #[sqlx(rename = "board_authorized_only")]
     pub authorized_only: bool,
 }
 
-#[derive(sqlx::FromRow, Serialize, PartialEq, Debug)]
+#[derive(sqlx::FromRow, Serialize, PartialEq, Debug, Default)]
 pub struct BoardEntityWithThreadInfo {
+    #[sqlx(rename = "board_id")]
     pub id: Uuid,
+    #[sqlx(rename = "board_name")]
     pub name: String,
+    #[sqlx(rename = "board_description")]
     pub description: String,
+    #[sqlx(rename = "board_authorized_only")]
     pub authorized_only: bool,
     pub total_threads: i64,
     pub most_recent_post_time: DateTime<Utc>,
@@ -24,29 +32,24 @@ pub struct BoardEntityWithThreadInfo {
 
 impl BoardEntity {
     pub async fn get_all(pool: &PgPool) -> Result<Vec<Self>, sqlx::Error> {
-        let result = query!(
+        let result = query(
             //language=PostgreSQL
             r#"
-        SELECT 
-            board_id, 
-            board_name, 
-            board_description, 
-            board_authorized_only
-        FROM 
-            board
+            SELECT
+                board_id,
+                board_name,
+                board_description,
+                board_authorized_only
+            FROM
+                board
         "#
         )
-        .fetch_all(pool)
-        .await?;
+            .fetch_all(pool)
+            .await?;
 
         let boards: Vec<Self> = result
             .into_iter()
-            .map(|row| Self {
-                id: row.board_id,
-                name: row.board_name,
-                description: row.board_description,
-                authorized_only: row.board_authorized_only,
-            })
+            .map(|row| Self::from_row(&row).unwrap_or_default())
             .collect::<Vec<Self>>();
 
         Ok(boards)
@@ -67,16 +70,16 @@ impl BoardEntity {
             board_id = $1
         "#,
         )
-        .bind(board_id)
-        .fetch_one(pool)
-        .await?;
+            .bind(board_id)
+            .fetch_one(pool)
+            .await?;
         Ok(board)
     }
 
     pub async fn get_all_board_info(
         pool: &PgPool,
     ) -> Result<Vec<BoardEntityWithThreadInfo>, sqlx::Error> {
-        let result = query!(
+        let result = query(
             //language=PostgreSQL
             r#"
             SELECT b.board_id,
@@ -102,15 +105,7 @@ impl BoardEntity {
 
         let boards: Vec<BoardEntityWithThreadInfo> = result
             .into_iter()
-            .map(|row| BoardEntityWithThreadInfo {
-                id: row.board_id,
-                name: row.board_name,
-                description: row.board_description,
-                authorized_only: row.board_authorized_only,
-                total_threads: row.total_threads.unwrap_or_default(),
-                most_recent_post_time: row.most_recent_post_time.unwrap_or_default(),
-                most_recent_post_title: row.most_recent_post_title.unwrap_or_default(),
-            })
+            .map(|row| BoardEntityWithThreadInfo::from_row(&row).unwrap_or_default())
             .collect::<Vec<BoardEntityWithThreadInfo>>();
 
         Ok(boards)
@@ -142,9 +137,9 @@ impl BoardEntity {
             GROUP BY b.board_id, b.board_name, b.board_description, b.board_authorized_only;
         "#,
         )
-        .bind(id)
-        .fetch_one(pool)
-        .await?;
+            .bind(id)
+            .fetch_one(pool)
+            .await?;
 
         Ok(board)
     }
