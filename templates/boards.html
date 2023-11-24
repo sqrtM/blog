@@ -2,8 +2,8 @@
 {% call super() %}
 {% block content %}
     <body>
-    <h1>Boards</h1>
-    <table>
+    <h1 class="board-title">Boards</h1>
+    <table class="boards-table">
         <thead>
         <tr>
             <th>Board Name</th>
@@ -16,12 +16,12 @@
         </thead>
         <tbody>
         {% for board in boards %}
-            <tr>
-                <td><a href="/forum/{{ board.id }}">{{ board.name }}</a></td>
+            <tr class="board-row">
+                <td><a href="/forum/{{ board.id }}" class="board-link">{{ board.name }}</a></td>
                 <td>{{ board.description }}</td>
                 <td>{{ board.total_threads }}</td>
                 <td>{{ board.most_recent_post_title }}</td>
-                <td>{{ board.most_recent_post_time }}</td>
+                <td>{{ board.most_recent_post_time|format_utc_datetime }}</td>
                 <td>{{ board.authorized_only }}</td>
             </tr>
         {% endfor %}

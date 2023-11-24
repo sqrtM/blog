@@ -1,7 +1,7 @@
 <li class="reply" id="{{ "reply-{}"|format(reply.id) }}">
     <div class="reply-info">
-        <span class="reply-author">{{ reply.author_name }}</span>
         <span class="reply-id">{{ reply.id }}</span>
+        <span class="reply-author">{{ reply.author_name }}</span>
         <span class="reply-date">{{ reply.created_at|format_utc_datetime }}</span>
         {% for r in reply.child_reply_ids %}
             {% match r %}

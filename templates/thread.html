@@ -1,10 +1,14 @@
 <li class="thread">
     <div class="thread-info">
-                <span class="thread-author">
+        <span class="thread-title">
+            {{ thread.title }}
+        </span>
+        <span class="thread-author">
                     {{ thread.author_name }}
-                </span>
-        <span class="thread-title">{{ thread.title }}</span>
-        <span class="thread-date">{{ thread.created_at|format_utc_datetime }}</span>
+        </span>
+        <span class="thread-date">
+            {{ thread.created_at|format_utc_datetime }}
+        </span>
     </div>
     <div class="thread-content">
         {{ thread.content }}

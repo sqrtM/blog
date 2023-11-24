@@ -1,23 +1,29 @@
 <!--suppress CssUnusedSymbol -->
 <style>
     body, h1, h2, h3, p, ul, li {
+        font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
+    }
+
+    main {
+        max-width: 98%;
+        margin: 2%;
+        padding: 2%;
+        background-color: #05ffd9;
+        word-wrap: break-word;
+        border: 1rem ridge #333333;
+        border-radius: 10%;
     }
 
     li {
         list-style-type: none;
     }
 
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f2f2f2;
-    }
-
     header {
-        background-color: #333;
-        color: #fff;
-        padding: 10px;
+        background-color: #333333;
+        color: #ffffff;
+        padding: 1%;
     }
 
     nav ul {
@@ -26,28 +32,20 @@
 
     nav ul li {
         display: inline;
-        margin-right: 20px;
+        margin-right: 2%;
     }
 
     nav a {
         text-decoration: none;
-        color: #fff;
+        color: #ffffff;
         font-weight: bold;
-    }
-
-    main {
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     footer {
         text-align: center;
-        background-color: #333;
-        color: #fff;
-        padding: 10px;
+        background-color: #333333;
+        color: #ffffff;
+        padding: 1%;
     }
 
     .copyleft {
@@ -56,50 +54,91 @@
     }
 
     .htmx-request {
-        opacity: 0.7;
+        opacity: 1;
         transition: opacity 0.3s ease;
     }
 
-    .htmx-request.htmx-running {
-        opacity: 1;
+    /* THREADS */
+    /* THREADS */
+    /* THREADS */
+    /* THREADS */
+    /* THREADS */
+    /* THREADS */
+    /* THREADS */
+    /* THREADS */
+    /* THREADS */
+
+    .board-title {
+        font-size: xxx-large;
+        padding-left: 5%;
     }
 
-    /* THREADS */
-    /* THREADS */
-    /* THREADS */
-    /* THREADS */
-    /* THREADS */
-    /* THREADS */
-    /* THREADS */
-    /* THREADS */
-    /* THREADS */
-
-
-
-    .threads-container {
-        max-width: 800px;
-        margin: 20px auto;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    .board-description {
+        font-size: x-large;
+        padding-left: 5%;
     }
 
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f5f5f5;
+    #new-thread-form {
+        max-width: 90%;
+        margin: 2% auto;
+        padding: 2%;
+        border-radius: 2vh;
+        border: 0.5rem ridge #333333;
+        background-color: #f9f9f9;
+    }
+
+    #new-thread-form h3 {
+        color: #333;
+        margin-bottom: 1vw;
+    }
+
+    #new-thread-form form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #new-thread-form label {
+        margin-bottom: 0.2vw;
+    }
+
+    #new-thread-form input,
+    #new-thread-form textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 1vw;
+        margin-bottom: 1vw;
+        border: 0.1vw solid #ddd;
+        border-radius: 0.4vw;
+    }
+
+    #new-thread-form button {
+        background-color: #3aeebc;
+        color: #fff;
+        padding: 1vw;
+        border: none;
+        cursor: pointer;
+        border-radius: 0.4vw;
+    }
+
+    #new-thread-form button:hover {
+        background-color: #00fff9;
     }
 
     .thread {
-        margin-bottom: 20px;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
+        margin-bottom: 2%;
+        padding: 1.5%;
+        border-radius: 2vh;
         background-color: #fff;
+        border: 0.5rem ridge #333333;
     }
 
     .thread-info {
-        margin-bottom: 10px;
+        margin-bottom: 1%;
+    }
+
+    .thread-title {
+        font-size: x-large;
+        color: #333;
     }
 
     .thread-author {
@@ -107,23 +146,18 @@
         color: #0077cc; /* Adjust color as needed */
     }
 
-    .thread-title {
-        font-size: 18px;
-        color: #333;
-    }
-
     .thread-date {
         color: #666;
     }
 
     .thread-content {
-        margin-top: 10px;
+        margin-top: 1%;
         color: #444;
     }
 
     .replies-list {
         list-style-type: none;
-        margin-top: 15px;
+        margin-top: 1.5%;
     }
 
     /* REPLIES */
@@ -136,10 +170,10 @@
     /* REPLIES */
     /* REPLIES */
     .reply {
-        margin-top: 15px;
-        padding: 10px;
-        border: 1px solid #eee;
-        border-radius: 4px;
+        margin-top: 1.5%;
+        padding: 1%;
+        border: 0.5rem ridge #333333;
+        border-radius: 2vh;
         background-color: #f9f9f9;
     }
 
@@ -148,7 +182,7 @@
     }
 
     .reply-info {
-        margin-bottom: 10px;
+        margin-bottom: 1%;
     }
 
     .reply-author {
@@ -157,7 +191,7 @@
     }
 
     .reply-replies {
-        margin-right: 10px;
+        margin-right: 1%;
     }
 
     .reply-date {
@@ -165,7 +199,43 @@
     }
 
     .reply-content {
-        margin-top: 10px;
+        margin-top: 1%;
         color: #444;
+    }
+
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    /* Boards */
+    .boards-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2%;
+    }
+
+    .board-row {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .board-row:hover {
+        background-color: #f5f5f5;
+    }
+
+    .board-link {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        display: inline-block;
+        padding: 5px;
+    }
+
+    .board-link:hover {
+        background-color: #ddd;
     }
 </style>

@@ -1,30 +1,28 @@
 {% extends "base.html" %}
 {% call super() %}
 {% block content %}
-    <div class="threads-container">
-        <h2>{{ board.name }}</h2>
-        <p>{{ board.description }}</p>
-        <div id="new-thread-form">
-            <h3>Create a New Thread</h3>
-            <form hx-post="/forum/{{ board.id }}" hx-swap="outerHTML" hx-target="#new-thread-form">
-                <label for="new-thread-author">Author:</label>
-                <input type="text" id="new-thread-author" name="author" required>
+    <h2 class="board-title">{{ board.name }}</h2>
+    <p class="board-description">{{ board.description }}</p>
+    <div id="new-thread-form">
+        <h3>Create a New Thread</h3>
+        <form hx-post="/forum/{{ board.id }}" hx-swap="outerHTML" hx-target="#new-thread-form">
+            <label for="new-thread-author">Author:</label>
+            <input type="text" id="new-thread-author" name="author" required>
 
-                <label for="new-thread-title">Title:</label>
-                <input type="text" id="new-thread-title" name="title" required>
+            <label for="new-thread-title">Title:</label>
+            <input type="text" id="new-thread-title" name="title" required>
 
-                <label for="new-thread-content">Content:</label>
-                <textarea id="new-thread-content" name="content" placeholder="Type your thread content here..."
-                          required></textarea>
+            <label for="new-thread-content">Content:</label>
+            <textarea id="new-thread-content" name="content" placeholder="Type your thread content here..."
+                      required></textarea>
 
-                <button type="submit">Create Thread</button>
-            </form>
-        </div>
-
-        <ul class="thread-list">
-            {% for thread in threads %}
-                {% include "thread.html" %}
-            {% endfor %}
-        </ul>
+            <button type="submit">Create Thread</button>
+        </form>
     </div>
+
+    <ul class="thread-list">
+        {% for thread in threads %}
+            {% include "thread.html" %}
+        {% endfor %}
+    </ul>
 {% endblock %}
