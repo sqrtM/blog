@@ -26,6 +26,7 @@ pub struct UserEntity {
     pub last_connection: chrono::DateTime<Utc>,
 }
 
+#[derive(sqlx::FromRow)]
 struct UserRecoveryKey {
     key: Option<String>,
 }
@@ -35,17 +36,16 @@ impl UserEntity {
         pool: &Pool<Postgres>,
         request: AddUserRequest,
     ) -> Result<AddResponse<String>, FailResponse<UserError>> {
-        match query_as!(
-            UserRecoveryKey,
+        match query_as::<_, UserRecoveryKey>(
             // language=PostgreSQL
             "
         SELECT insert_user($1, $2) as key;
         ",
-            request.username,
-            request.password,
         )
-        .fetch_one(pool)
-        .await
+            .bind(request.username)
+            .bind(request.password)
+            .fetch_one(pool)
+            .await
         {
             Ok(key) => Ok(AddResponse {
                 status: StatusCode::ACCEPTED,
@@ -87,8 +87,7 @@ impl UserEntity {
         pool: &Pool<Postgres>,
         request: ChangePasswordRequest,
     ) -> Result<AddResponse<String>, FailResponse<UserError>> {
-        match query_as!(
-            UserRecoveryKey,
+        match query_as::<_, UserRecoveryKey>(
             // language=PostgreSQL
             "
         WITH new_key AS (
@@ -102,13 +101,13 @@ impl UserEntity {
           AND user_username = $4
         RETURNING (SELECT unhashed_key FROM new_key) AS key;
         ",
-            request.new_password,
-            request.recovery_key,
-            request.old_password,
-            request.username
         )
-        .fetch_one(pool)
-        .await
+            .bind(request.new_password)
+            .bind(request.recovery_key)
+            .bind(request.old_password)
+            .bind(request.username)
+            .fetch_one(pool)
+            .await
         {
             Ok(key) => Ok(AddResponse {
                 status: StatusCode::ACCEPTED,
