@@ -18,6 +18,7 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    //testing
     match dotenvy::dotenv() {
         Ok(_) => {}
         Err(_) => {}
