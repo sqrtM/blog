@@ -18,6 +18,7 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    // load .env but don't crash yet if it isn't found.
     match dotenvy::dotenv() {
         Ok(_) => {}
         Err(_) => {}
