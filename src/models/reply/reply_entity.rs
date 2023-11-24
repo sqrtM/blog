@@ -5,8 +5,8 @@ use regex::Regex;
 use sanitize_html::rules::predefined::DEFAULT;
 use sanitize_html::sanitize_str;
 use serde::Serialize;
+use sqlx::{PgPool, query_as};
 use sqlx::types::Uuid;
-use sqlx::{query_as, PgPool};
 
 use crate::models::reply::add_reply_to_thread_request::AddReplyToThreadRequest;
 
@@ -45,9 +45,9 @@ impl ReplyEntity {
             GROUP BY r.reply_id;
         "#,
         )
-        .bind(post_id)
-        .fetch_all(pool)
-        .await?;
+            .bind(post_id)
+            .fetch_all(pool)
+            .await?;
 
         Ok(result)
     }
@@ -82,25 +82,25 @@ impl ReplyEntity {
                     ARRAY []::UUID[] AS parent_reply_ids,
                     ARRAY []::UUID[]  AS child_reply_ids",
         )
-        .bind(new_reply_id)
-        .bind(request.author_id)
-        .bind(content)
-        .bind(thread_id)
-        .fetch_one(pool)
-        .await?;
+            .bind(new_reply_id)
+            .bind(request.author_id)
+            .bind(content)
+            .bind(thread_id)
+            .fetch_one(pool)
+            .await?;
 
         for referenced_reply_id in referenced_reply_ids {
-            sqlx::query!(
+            sqlx::query(
                 //language=PostgreSQL
                 "INSERT INTO 
                     reply_relation (parent_reply_id, child_reply_id)
                 VALUES 
                     ($1, $2)",
-                referenced_reply_id,
-                new_reply_id
             )
-            .execute(pool)
-            .await?;
+                .bind(referenced_reply_id)
+                .bind(new_reply_id)
+                .execute(pool)
+                .await?;
         }
         Ok(reply)
     }
