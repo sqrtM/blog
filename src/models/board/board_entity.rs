@@ -118,10 +118,10 @@ impl BoardEntity {
         let board = query_as::<_, BoardEntityWithThreadInfo>(
             //language=PostgreSQL
             r#"
-            SELECT b.board_id                                                                                    AS id,
-                   b.board_name                                                                                  AS name,
-                   b.board_description                                                                           AS description,
-                   b.board_authorized_only                                                                       AS authorized_only,
+            SELECT b.board_id,
+                   b.board_name,
+                   b.board_description,
+                   b.board_authorized_only,
                    COUNT(t.thread_id)                                                                            AS total_threads,
                    MAX(GREATEST(t.thread_created_at,
                                 COALESCE(max_reply.reply_created_at, b.board_created_at)))                       AS most_recent_post_time,

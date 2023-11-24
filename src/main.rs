@@ -19,10 +19,7 @@ pub struct AppState {
 #[tokio::main]
 async fn main() {
     // load .env but don't crash yet if it isn't found.
-    match dotenvy::dotenv() {
-        Ok(_) => {}
-        Err(_) => {}
-    }
+    let _ = dotenvy::dotenv().is_ok();
 
     let app_state = AppState {
         db: get_pool().await,
@@ -51,10 +48,7 @@ mod tests {
     #[tokio::test]
     async fn it_should_get() {
         // load .env but don't crash yet if it isn't found.
-        match dotenvy::dotenv() {
-            Ok(_) => {}
-            Err(_) => {}
-        }
+        let _ = dotenvy::dotenv().is_ok();
 
         let app_state = AppState {
             db: PgPool::connect_lazy(&std::env::var("DATABASE_URL").expect("DATABASE_URL must be set")).unwrap()

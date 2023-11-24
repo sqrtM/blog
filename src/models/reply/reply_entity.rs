@@ -12,11 +12,17 @@ use crate::models::reply::add_reply_to_thread_request::AddReplyToThreadRequest;
 
 #[derive(sqlx::FromRow, Serialize, PartialEq, Debug)]
 pub struct ReplyEntity {
+    #[sqlx(rename = "reply_id")]
     pub id: Uuid,
+    #[sqlx(rename = "reply_author_id")]
     pub author_id: Option<Uuid>,
+    #[sqlx(rename = "reply_content")]
     pub content: String,
+    #[sqlx(rename = "reply_created_at")]
     pub created_at: Option<DateTime<Utc>>,
+    #[sqlx(rename = "reply_updated_at")]
     pub updated_at: Option<DateTime<Utc>>,
+    #[sqlx(rename = "reply_post_id")]
     pub post_id: Uuid,
     pub parent_reply_ids: Option<Vec<Option<Uuid>>>,
     pub child_reply_ids: Option<Vec<Option<Uuid>>>,
@@ -30,12 +36,12 @@ impl ReplyEntity {
         let result = query_as::<_, ReplyEntity>(
             //language=PostgreSQL
             r#"
-            SELECT r.reply_id AS id,
-                   r.reply_author_id AS author_id,
-                   r.reply_content AS content,
-                   r.reply_created_at AS created_at,
-                   r.reply_updated_at AS updated_at,
-                   r.reply_post_id AS post_id,
+            SELECT r.reply_id,
+                   r.reply_author_id,
+                   r.reply_content,
+                   r.reply_created_at,
+                   r.reply_updated_at,
+                   r.reply_post_id,
                    COALESCE(array_agg(parent.parent_reply_id), ARRAY[]::UUID[]) AS parent_reply_ids,
                    COALESCE(array_agg(child.child_reply_id), ARRAY[]::UUID[]) AS child_reply_ids
             FROM reply r
@@ -73,12 +79,12 @@ impl ReplyEntity {
             //language=PostgreSQL
             "INSERT INTO reply (reply_id, reply_author_id, reply_content, reply_post_id)
                 VALUES ($1, $2, $3, $4)
-                RETURNING reply_id AS id,
-                    reply_author_id AS author_id,
-                    reply_content AS content,
-                    reply_created_at AS created_at,
-                    reply_updated_at AS updated_at,
-                    reply_post_id AS post_id,
+                RETURNING reply_id,
+                    reply_author_id,
+                    reply_content,
+                    reply_created_at,
+                    reply_updated_at,
+                    reply_post_id,
                     ARRAY []::UUID[] AS parent_reply_ids,
                     ARRAY []::UUID[]  AS child_reply_ids",
         )

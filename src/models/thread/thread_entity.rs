@@ -13,12 +13,19 @@ use crate::views::thread_view::ThreadView;
 
 #[derive(sqlx::FromRow, Serialize, PartialEq, Default)]
 pub struct ThreadEntity {
+    #[sqlx(rename = "thread_id")]
     pub id: Uuid,
+    #[sqlx(rename = "thread_author_id")]
     pub author_id: Option<Uuid>,
+    #[sqlx(rename = "thread_title")]
     pub title: String,
+    #[sqlx(rename = "thread_content")]
     pub content: String,
+    #[sqlx(rename = "thread_created_at")]
     pub created_at: DateTime<Utc>,
+    #[sqlx(rename = "thread_updated_at")]
     pub updated_at: DateTime<Utc>,
+    #[sqlx(rename = "thread_board_id")]
     pub board_id: Uuid,
 }
 
@@ -93,13 +100,13 @@ impl ThreadEntity {
         INSERT INTO thread (thread_title, thread_content, thread_author_id, thread_board_id)
         VALUES ($1, $2, $3, $4)
         RETURNING 
-            thread_id AS id,
-            thread_title AS title,
-            thread_content AS content,
-            thread_created_at AS created_at,
-            thread_updated_at AS updated_at,
-            thread_board_id AS board_id,
-            (SELECT user_id FROM users WHERE user_id = $3) AS author_id;
+            thread_id,
+            thread_title,
+            thread_content,
+            thread_created_at,
+            thread_updated_at,
+            thread_board_id,
+            (SELECT user_id FROM users WHERE user_id = $3) AS thread_author_id;
         ",
         )
             .bind(request.title)
