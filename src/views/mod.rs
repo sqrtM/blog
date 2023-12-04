@@ -1,9 +1,11 @@
+use crate::views::blog_view::BlogPostView;
 use askama::Template;
 
 use crate::views::board_view::BoardView;
 use crate::views::reply_view::ReplyView;
 use crate::views::thread_view::ThreadView;
 
+pub mod blog_view;
 pub mod board_view;
 pub mod reply_view;
 pub mod thread_view;
@@ -51,4 +53,10 @@ pub struct NewThread {
 #[template(path = "reply.html")]
 pub struct NewReply {
     pub(crate) reply: ReplyView,
+}
+
+#[derive(Template)]
+#[template(path = "blog-post.html")]
+pub struct BlogPost {
+    pub(crate) post: BlogPostView,
 }

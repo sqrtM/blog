@@ -18,7 +18,7 @@
             {% include "reply.html" %}
         {% endfor %}
     </ul>
-    <div id="new-reply-form-{{ thread.id }}">
+    <div id="new-reply-form-{{ thread.id }}" class="reply-form-container">
         <form hx-post="/replies/{{ thread.id }}" id="{{ "thread-form-{}"|format(thread.id) }}" class="reply-form"
               hx-swap="outerHTML" hx-target="#new-reply-form-{{ thread.id }}">
             <label>

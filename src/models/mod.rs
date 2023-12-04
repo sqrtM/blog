@@ -9,6 +9,7 @@ pub mod reply;
 pub mod user;
 pub mod thread;
 pub mod board;
+pub mod blog;
 
 #[derive(Clone)]
 pub struct GetResponse<T: Serialize + PartialEq> {

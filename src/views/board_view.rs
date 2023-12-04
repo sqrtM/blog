@@ -1,9 +1,7 @@
-use crate::models::board::board_entity::BoardEntityWithThreadInfo;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
-use uuid::Uuid;
 
-use crate::models::reply::reply_entity::ReplyEntity;
+use crate::models::board::board_entity::BoardEntityWithThreadInfo;
 
 #[derive(Serialize, Clone, Debug)]
 pub struct BoardView {
