@@ -1,4 +1,4 @@
-use crate::views::blog_view::BlogPostView;
+use crate::views::blog_view::{BlogPostView, BlogSummaryView};
 use askama::Template;
 
 use crate::views::board_view::BoardView;
@@ -57,6 +57,12 @@ pub struct NewReply {
 
 #[derive(Template)]
 #[template(path = "blog-post.html")]
-pub struct BlogPost {
+pub struct BlogPostPage {
     pub(crate) post: BlogPostView,
+}
+
+#[derive(Template)]
+#[template(path = "blog-posts.html")]
+pub struct AllBlogPostsPage {
+    pub(crate) posts: Vec<BlogSummaryView>,
 }

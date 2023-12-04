@@ -1,3 +1,12 @@
-<div>
-    Hiiii!!!!!!
-</div>
+{% extends "base.html" %}
+{% call super() %}
+{% block content %}
+    <article>
+        <h1 class="blog-title">{{ post.title }}</h1>
+        <p class="blog-description">{{ post.description }}</p>
+        <p class="blog-meta">Posted on {{ post.created_at|format_utc_datetime }}</p>
+        <div class="blog-content">
+            {{ post.content|safe }}
+        </div>
+    </article>
+{% endblock %}
