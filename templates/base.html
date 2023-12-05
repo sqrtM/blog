@@ -9,11 +9,31 @@
 <body>
 <header>
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@1.6.0/dist/htmx.js"></script>
+    <script>
+        function getSwatchInternetTime() {
+            const now = new Date();
+            const beats = Math.floor(((now.getUTCHours() + 1) % 24 + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600) * 1000 / 24);
+            return beats.toString().padStart(3, '0');
+        }
+
+        function updateSwatchTime() {
+            const swatchTimeElement = document.getElementById('swatchTime');
+            if (swatchTimeElement) {
+                swatchTimeElement.innerText = '@' + getSwatchInternetTime();
+            }
+        }
+
+        setInterval(updateSwatchTime, 1000);
+        updateSwatchTime();
+    </script>
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="/boards">Boards</a></li>
+        </ul>
+        <ul>
+            <li id="swatchTime"></li>
         </ul>
     </nav>
 </header>
