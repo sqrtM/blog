@@ -15,7 +15,7 @@
     </div>
     <ul class="replies-list">
         {% for reply in thread.replies %}
-            {% include "reply.html" %}
+            {% include "forum/components/reply.html" %}
         {% endfor %}
     </ul>
     <div id="new-reply-form-{{ thread.id }}" class="reply-form-container">

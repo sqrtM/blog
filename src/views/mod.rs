@@ -31,38 +31,45 @@ mod filters {
 pub struct HomeTemplate;
 
 #[derive(Template)]
-#[template(path = "boards.html")]
+#[template(path = "components/random-fact.html")]
+pub struct RandomFactTemplate {
+    pub(crate) question: String,
+    pub(crate) answer: String,
+}
+
+#[derive(Template)]
+#[template(path = "forum/boards.html")]
 pub struct AllBoardsPage {
     pub boards: Vec<BoardView>,
 }
 
 #[derive(Template)]
-#[template(path = "threads.html")]
+#[template(path = "forum/threads.html")]
 pub struct ThreadsPage {
     pub(crate) board: BoardView,
     pub(crate) threads: Vec<ThreadView>,
 }
 
 #[derive(Template)]
-#[template(path = "thread.html")]
+#[template(path = "forum/components/thread.html")]
 pub struct NewThread {
     pub(crate) thread: ThreadView,
 }
 
 #[derive(Template)]
-#[template(path = "reply.html")]
+#[template(path = "forum/components/reply.html")]
 pub struct NewReply {
     pub(crate) reply: ReplyView,
 }
 
 #[derive(Template)]
-#[template(path = "blog-post.html")]
+#[template(path = "blog/blog-post.html")]
 pub struct BlogPostPage {
     pub(crate) post: BlogPostView,
 }
 
 #[derive(Template)]
-#[template(path = "blog-posts.html")]
+#[template(path = "blog/blog-posts.html")]
 pub struct AllBlogPostsPage {
     pub(crate) posts: Vec<BlogSummaryView>,
 }

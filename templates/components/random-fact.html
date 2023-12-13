@@ -1,0 +1,6 @@
+<form id="random-fact-form"
+      hx-swap="outerHTML" hx-target="#random-fact-container">
+    <b>{{ question }}</b>: {{ answer }}
+    <button hx-trigger="click" hx-swap="outerHTML" hx-target="#random-fact-form" hx-get="/random-fact">reroll ?
+    </button>
+</form>

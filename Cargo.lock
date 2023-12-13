@@ -312,6 +312,7 @@ dependencies = [
  "dotenvy",
  "futures",
  "hyperlocal",
+ "rand",
  "regex",
  "sanitize_html",
  "serde",

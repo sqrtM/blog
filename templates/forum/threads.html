@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "../base.html" %}
 {% call super() %}
 {% block content %}
     <h2 class="board-title">{{ board.name }}</h2>
@@ -22,7 +22,7 @@
 
     <ul class="thread-list">
         {% for thread in threads %}
-            {% include "thread.html" %}
+            {% include "components/thread.html" %}
         {% endfor %}
     </ul>
 {% endblock %}
